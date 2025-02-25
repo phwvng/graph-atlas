@@ -31,10 +31,10 @@ const showButton = () => {
 
         <div className="navbar-container">
         <Link to="/" className="navbar-logo" onClick={closeMobileMenu}>
-        GraphAtlas <i class="fa-solid fa-hexagon-nodes"></i>
+        GraphAtlas <i className="fa-solid fa-hexagon-nodes"></i>
         </Link>
-       <div className="menu-icon">
-            <i className={click ? 'fa-solid fa-times' : 'fa-solid fa-bars'}/>
+       <div className="menu-icon" onClick={handleClick}>
+       <i className={click ? 'fa-solid fa-times' : 'fa-solid fa-bars'} />
       </div>
       <ul className={click ? 'nav-menu active' : 'nav-menu'}>
       <li className="nav-item">
