@@ -6,8 +6,8 @@ import './HeroSection.css'
 function HeroSection() {
   return (
     <div className="hero-container">
-      <video src={process.env.PUBLIC_URL + '/videos/video-2.mp4'} autoPlay loop muted />
-        <h1>EXPLORE KNOWLEDGE GRAPHS</h1>
+      <video src={process.env.PUBLIC_URL + '/videos/video3.mp4'} autoPlay loop muted />
+        <h1>FIND YOUR GRAPH</h1>
         <p>What are you waiting for?</p>
         <div className="hero-btns">
           <Button className="btns" buttonStyle="btn--outline" buttonSize="btn--large">
