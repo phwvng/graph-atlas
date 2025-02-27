@@ -1,24 +1,65 @@
 import styled from 'styled-components';
 
 export const ExploreContainer = styled.div`
+  background: #0c0c0c;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 30px;
+  height: 800px;
+  position: relative;
+  z-index: 1;
+
 `;
 
 
-export const ExploreBg = styled.div`
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    `;
+export const DomainBox = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    grid-gap: 16px; /* Adds space between items */
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+    max-width: 1000px;
+    padding: 8px 24px;
+    border-radius: 10px;
+    border: 1px solid #01bf71;
+    margin: 0 auto;
+  `;
 
-export const Background = styled.div`
+  export const FormContainer = styled.form`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+    max-width: 1200px;
+    position: relative;
+    margin: 0 auto;
+    margin-bottom: 32px;
+  `;
+
+  export const SearchBar = styled.input`
+    padding: 16px 24px;
+    border: none;
+    outline: none;
     width: 100%;
-    height: 100%;
-    -o-object-fit: cover;
-    object-fit: cover;
-    background: #232a34;
-    `;
+    border-radius: 50px;
+    margin-right: 10px;
+  `;
+
+  export const SearchButton = styled.button`
+    padding: 16px 24px;
+    border: none;
+    outline: none;
+    border-radius: 50px;
+    background: #01bf71;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    &:hover {
+      background: #fff;
+      color: #010606;
+    }
+  `;
