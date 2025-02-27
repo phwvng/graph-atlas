@@ -3,9 +3,10 @@ import { Link as LinkR } from 'react-router-dom';
 import { Link as LinkS } from 'react-scroll';
 
 export const Nav = styled.nav`
-  background: #000;
+  background: ${({ scrollNav }) => (scrollNav ? '#000' : 'transparent')};
   height: 80px;
-  margin-top: -80px;
+   margin-top: ${(props) => (props.isNewPage ? '0px' : '-80px')};
+  transition: margin-top 0.3s ease-in-out;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -80,7 +81,7 @@ export const NavLinks = styled(LinkS)`
   padding: 0 1rem;
   height: 100%;
   cursor: pointer;
-
+  
   &.active {
     border-bottom: 3px solid #01bf71;
   }

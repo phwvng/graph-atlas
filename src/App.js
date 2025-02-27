@@ -2,19 +2,17 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import React from 'react';
-import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
 import Home from './pages';
+import ExplorePage from './pages/explore';
 
 
 function App() {
   return (
     <>
     <Router>
-    <Home />
       <Routes>
-      <Route path='/' exact/>
-
+      <Route path='/' element={<Home />} exact/>
+      <Route path='explore' element={<ExplorePage />} exact/>
       </Routes>
     </Router>
     </>

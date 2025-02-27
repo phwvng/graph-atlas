@@ -19,7 +19,7 @@ const HeroSection = () => {
         <HeroH1>Knowledge Graph Exploration Made Easy</HeroH1>
         <HeroP>Start exploring Knowledge Graphs today</HeroP>
         <HeroBtnWrapper>
-          <Button to="signup" onMouseEnter={onHover} onMouseLeave={onHover} primary="true" dark="true">Get started {hover ? <ArrowForward /> : <ArrowRight />}</Button>
+          <Button to="explore" onMouseEnter={onHover} onMouseLeave={onHover} primary="true" dark="true">Get started {hover ? <ArrowForward /> : <ArrowRight />}</Button>
         </HeroBtnWrapper>
       </HeroContent>
     </HeroContainer>

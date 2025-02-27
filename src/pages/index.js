@@ -3,7 +3,9 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import HeroSection from '../components/HeroSection';
 import InfoSection from '../components/InfoSection';
-import { homeObjOne } from '../components/InfoSection/data';
+import Services from '../components/Services';
+import Footer from '../components/Footer';
+import { homeObjOne, homeObjTwo } from '../components/InfoSection/data';
 
 
 const Home = () => {
@@ -15,9 +17,12 @@ const Home = () => {
   return (
     <>
       <Sidebar isOpen={isOpen} toggle={toggle}/>
-      <Navbar toggle={toggle}/>
+      <Navbar toggle={toggle} isNewPage={false}/>
       <HeroSection />
       <InfoSection {...homeObjOne}/>
+      <InfoSection {...homeObjTwo}/>
+      <Services />
+      <Footer />
     </>
   );
 };
