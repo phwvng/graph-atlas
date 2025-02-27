@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/graphpolaris-usecase-repository/static/css/main.d7da34c1.css",
+    "main.js": "/graphpolaris-usecase-repository/static/js/main.a2227c58.js",
+    "static/media/video3.mp4": "/graphpolaris-usecase-repository/static/media/video3.938cd958a519dfe9fd8e.mp4",
+    "static/media/img-2.jpg": "/graphpolaris-usecase-repository/static/media/img-2.bb238fc1bea8ae2474d2.jpg",
+    "static/media/img-3.jpg": "/graphpolaris-usecase-repository/static/media/img-3.6d683c0ee6824af7961a.jpg",
+    "static/media/svg-1.svg": "/graphpolaris-usecase-repository/static/media/svg-1.a98bf5004d229356df9fc916a31e5077.svg",
+    "index.html": "/graphpolaris-usecase-repository/index.html",
+    "main.d7da34c1.css.map": "/graphpolaris-usecase-repository/static/css/main.d7da34c1.css.map",
+    "main.a2227c58.js.map": "/graphpolaris-usecase-repository/static/js/main.a2227c58.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d7da34c1.css",
+    "static/js/main.a2227c58.js"
+  ]
+}
