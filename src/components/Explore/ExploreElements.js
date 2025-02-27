@@ -4,12 +4,12 @@ export const ExploreContainer = styled.div`
   background: #0c0c0c;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   padding: 0 30px;
   height: 800px;
   position: relative;
   z-index: 1;
-
+  margin-top: 80px;
 `;
 
 
@@ -28,16 +28,18 @@ export const DomainBox = styled.div`
   `;
 
   export const FormContainer = styled.form`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-    max-width: 1200px;
-    position: relative;
-    margin: 0 auto;
-    margin-bottom: 32px;
-  `;
+  
+  display: flex;
+  flex-direction: row; /* Arrange the items horizontally */
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+  max-width: 1200px;
+  position: relative;
+  margin: 0 auto;
+  margin-bottom: 32px;
+`;
+
 
   export const SearchBar = styled.input`
     padding: 16px 24px;
