@@ -3,6 +3,7 @@ import { ExploreContainer, DomainBox, FormContainer, SearchBar, SearchButton } f
 import { domainImages } from '../DomainImage/data';
 import DomainImage from '../DomainImage';
 import { Nav, NavLogo } from '../Navbar/NavbarElements';
+import Datapreview from '../Datapreview';
 
 
 const Explore = () => {
@@ -11,6 +12,8 @@ const Explore = () => {
   const handleSearch = (e) => {
     e.preventDefault();
   }
+
+  const [openDomainId, setOpenDomainId] = useState(false);
   // const [searchResults, setSearchResults] = useState([]);
 
   // const handleSearch = async (e) => {
@@ -46,12 +49,22 @@ const Explore = () => {
           <SearchButton type="submit">Search</SearchButton>
         </FormContainer>
 
-    <DomainBox>
-    {
-domainImages.map((domain) => (
-        <DomainImage key={domain.id} domain={domain} />
-      ))
-}
+        <DomainBox>
+  {domainImages.map((domain) => (
+    domain.title.toLowerCase().startsWith(searchQuery.toLowerCase()) && (
+      <div key={domain.id}>
+        <DomainImage
+          domain={domain}
+          onClick={() => setOpenDomainId(domain.id)} // Set the specific domain ID
+        />
+        <Datapreview
+          dataset={domain}
+          open={openDomainId === domain.id} // Check if this specific domain is open
+          onClose={() => setOpenDomainId(null)} // Close it
+        />
+      </div>
+    )
+  ))}
 </DomainBox>
 </ExploreContainer>
 </>

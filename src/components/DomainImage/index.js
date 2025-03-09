@@ -1,6 +1,8 @@
 import React from 'react';
 import { DomainContainer, DomainHeader, DomainImageContainer, DomainImg, DomainContent, DatasetSize, DatasetComplexity, DomainTag , DatasetSource, TagContainer, DataValue, Label } from './DomainElements';
 
+
+
 const generateTagColor = (tag) => {
   const hash = Array.from(tag).reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const hue = hash % 360; // Create a color based on hue
@@ -17,10 +19,11 @@ const DomainData = ({ label, data }) => {
   );
 };
 
-const DomainImage = ( { domain } ) => {
+const DomainImage = ( { domain, onClick } ) => {
   return (
     <>
-      <DomainContainer id={domain.id}>
+      <DomainContainer id={domain.id} onClick={onClick}>
+        
         <DomainHeader>{domain.title}</DomainHeader>
         <DomainImageContainer>
           <DomainImg src={domain.url} alt={domain.alt} />
@@ -43,6 +46,7 @@ const DomainImage = ( { domain } ) => {
           {domain.tags.map((tag) => (<DomainTag key={tag} color={generateTagColor(tag)}>#{tag}</DomainTag>))}
           </TagContainer>
         </DomainContent>
+
       </DomainContainer> 
     </>
   )
