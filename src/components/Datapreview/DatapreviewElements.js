@@ -10,6 +10,17 @@ export const Overlay = styled.div`
     z-index: 1000;
     `;
 
+export const PreviewButton = styled.button`
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #0c0c0c;
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    `;
+
 export const PreviewContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -60,5 +71,5 @@ export const PreviewDescription = styled.p`
     `;
 export const PreviewImage = styled.img`
     width: 100%;
-    max-width: 600px;
+    max-width: 250px;
     `;

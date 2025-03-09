@@ -1,5 +1,5 @@
 import React from 'react';
-import { Overlay, PreviewContainer, PreviewHeader, PreviewTitle, PreviewSubtitle, PreviewContent, PreviewImage, PreviewDescription } from './DatapreviewElements';
+import { Overlay, PreviewButton, PreviewContainer, PreviewHeader, PreviewTitle, PreviewSubtitle, PreviewContent, PreviewImage, PreviewDescription } from './DatapreviewElements';
 import ReactDom from 'react-dom';
 
 const Datapreview = ({ dataset, open, onClose  }) => {
@@ -10,7 +10,7 @@ const Datapreview = ({ dataset, open, onClose  }) => {
     <>
     <Overlay></Overlay>
     <PreviewContainer>
-      <button onClick={onClose}>Close</button>
+      <PreviewButton onClick={onClose}>Close</PreviewButton>
       <PreviewHeader>
         <PreviewTitle>{dataset.title}</PreviewTitle>
         <PreviewSubtitle>{dataset.subtitle || 'No subtitle available'}</PreviewSubtitle>

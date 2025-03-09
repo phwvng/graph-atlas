@@ -13,6 +13,7 @@ function App() {
       <Routes>
       <Route path='/' element={<Home />} exact/>
       <Route path='explore' element={<ExplorePage />} exact/>
+      <Route path='explore/domains/:domainId' element={<ExplorePage />} exact/>
       </Routes>
     </Router>
     </>

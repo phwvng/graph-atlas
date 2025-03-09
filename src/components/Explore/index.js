@@ -4,6 +4,7 @@ import { domainImages } from '../DomainImage/data';
 import DomainImage from '../DomainImage';
 import { Nav, NavLogo } from '../Navbar/NavbarElements';
 import Datapreview from '../Datapreview';
+import { useNavigate, useParams } from 'react-router-dom';
 
 
 const Explore = () => {
@@ -13,7 +14,13 @@ const Explore = () => {
     e.preventDefault();
   }
 
-  const [openDomainId, setOpenDomainId] = useState(false);
+  const navigate = useNavigate();
+  const { domainId } = useParams(); // Get the domain ID from the URL
+  const [openDomainId, setOpenDomainId] = useState(null);
+  useEffect(() => {
+    setOpenDomainId(domainId || null);
+  }, [domainId]);
+
   // const [searchResults, setSearchResults] = useState([]);
 
   // const handleSearch = async (e) => {
@@ -50,22 +57,22 @@ const Explore = () => {
         </FormContainer>
 
         <DomainBox>
-  {domainImages.map((domain) => (
-    domain.title.toLowerCase().startsWith(searchQuery.toLowerCase()) && (
-      <div key={domain.id}>
-        <DomainImage
-          domain={domain}
-          onClick={() => setOpenDomainId(domain.id)} // Set the specific domain ID
-        />
-        <Datapreview
-          dataset={domain}
-          open={openDomainId === domain.id} // Check if this specific domain is open
-          onClose={() => setOpenDomainId(null)} // Close it
-        />
-      </div>
-    )
-  ))}
-</DomainBox>
+      {domainImages.map((domain) => (
+        domain.title.toLowerCase().startsWith(searchQuery.toLowerCase()) && (
+          <React.Fragment key={domain.id}>
+            <DomainImage
+              domain={domain}
+              onClick={() => navigate(`/explore/domains/${domain.id}`)} // Update URL on click
+            />
+            <Datapreview
+              dataset={domain}
+              open={openDomainId === domain.id}
+              onClose={() => navigate("/explore")} // Reset URL on close
+            />
+          </React.Fragment>
+        )
+      ))}
+    </DomainBox>
 </ExploreContainer>
 </>
   )
