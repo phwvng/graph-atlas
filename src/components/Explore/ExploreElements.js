@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+
 export const ExploreContainer = styled.div`
   background: #0c0c0c;
   display: flex;
@@ -11,7 +12,6 @@ export const ExploreContainer = styled.div`
   z-index: 1;
   margin-top: 80px;
 `;
-
 
 export const DomainBox = styled.div`
     display: grid;

@@ -5,7 +5,8 @@ export const domainImages = [{
     size: '1000 nodes, 2000 edges',
     complexity: 'Medium',
     tags: ['Movies', 'Graph'],
-    source: 'IMDB'
+    source: 'IMDB',
+    description: 'A graph of movies and actors'
 },
 { 
     id: 'social-network',
@@ -14,8 +15,8 @@ export const domainImages = [{
     size: '500 nodes, 1000 edges',
     complexity: 'Simple',
     tags: ['Social Network', 'Graph', 'Friends'],
-    source: 'Facebook'
-
+    source: 'Facebook',
+    description: 'A graph of friends and connections'
 },
 {
     id: 'music',
@@ -24,7 +25,8 @@ export const domainImages = [{
     size: '300 nodes, 600 edges',
     complexity: 'Simple',
     tags: ['Music', 'Graph', 'Friends'],
-    source: 'Spotify'
+    source: 'Spotify',
+    description: 'A graph of songs and artists'
 },
 {
     id: 'finance',
@@ -33,6 +35,7 @@ export const domainImages = [{
     size: '200 nodes, 400 edges',
     complexity: 'Simple',
     tags: ['Finance', 'Money', 'Companies'],
-    source: 'Yahoo Finance'
+    source: 'Yahoo Finance',
+    description: 'A graph of companies and stock prices'
 }
 ];
