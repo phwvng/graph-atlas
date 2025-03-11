@@ -4,19 +4,20 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import React from 'react';
 import Home from './pages';
 import ExplorePage from './pages/explore';
+import {DataProvider} from './contexts/DataContext';
 
 
 function App() {
-  return (
-    <>
+  return (         
+    <DataProvider>
     <Router>
       <Routes>
       <Route path='/' element={<Home />} exact/>
-      <Route path='explore' element={<ExplorePage />} exact/>
+      <Route path='explore' element={<ExplorePage  />} exact/>
       <Route path='explore/domains/:domainId' element={<ExplorePage />} exact/>
       </Routes>
     </Router>
-    </>
+    </DataProvider>
   );
 }
 
