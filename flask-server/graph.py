@@ -1,10 +1,11 @@
 import networkx as nx
 import random
 from typing import Dict, Any, List
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from networkx.algorithms.community import girvan_newman, modularity
-from .utils import is_spatial, is_temporal
+from utils import is_spatial, is_temporal
 from statistics import stdev
+import json
 
 @dataclass
 class Graph(nx.Graph):
@@ -212,3 +213,20 @@ class Graph(nx.Graph):
     def get_statistics_values(self) -> List[Any]:
         """Get the values of all statistics."""
         return [getattr(self, field_name) for field_name in self.__dataclass_fields__]
+    
+
+
+    def to_json(self) -> str:
+        """Convert the graph's statistics to a JSON string."""
+        try:
+            # Ensure that statistics are extracted before converting to JSON
+            self.extract_statistics()
+
+            # Convert dataclass fields to dictionary
+            stats_dict = asdict(self)
+            
+            # Return the JSON representation
+            return json.dumps(stats_dict, default=str)  # Handle non-serializable fields if any
+        except Exception as e:
+            print(f"Error converting to JSON: {e}")
+            return "{}"

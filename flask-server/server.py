@@ -1,46 +1,23 @@
 from flask import Flask, jsonify
+from graph import Graph  # Import the custom Graph class
 
 app = Flask(__name__)
 
-# Graph API Route
-@app.route('/graph-api')
-def graph_api():
-    data = {
-        "graphs": [
-            {
-                "id": 'finance',
-                "title": 'Finance',
-                "url": "https://img.freepik.com/premium-vector/personal-finance-cartoon_24640-41281.jpg",
-                "size": '200 nodes, 400 edges',
-                "complexity": 'Simple',
-                "tags": ['Finance', 'Money', 'Companies'],
-                "source": 'Yahoo Finance',
-                "description": 'A graph of companies and stock prices'
-            },
-            {
-                "id": 'social',
-                "title": 'Social',
-                "url": "https://img.freepik.com/free-vector/social-media-connection-concept-illustration_114360-1076.jpg",
-                "size": '100 nodes, 200 edges',
-                "complexity": 'Simple',
-                "tags": ['Social', 'Friends', 'Connections'],
-                "source": 'Facebook',
-                "description": 'A graph of friends and connections'
-            },
-            {
-                "id": 'knowledge',
-                "title": 'Knowledge',
-                "url": "https://img.freepik.com/free-vector/abstract-education-background_23-2148536950.jpg",
-                "size": '500 nodes, 1000 edges',
-                "complexity": 'Complex',
-                "tags": ['Knowledge', 'Learning', 'Books'],
-                "source": 'Wikipedia',
-                "description": 'A graph of articles and links'
-            }
-        ]
-    }
-    return jsonify(data)  # Ensures a proper JSON response
+@app.route('/graph-api', methods=['GET'])
+def get_graph_stats():
+    # Create a random graph (replace this with your actual graph creation logic)
+    import networkx as nx
+    G = nx.fast_gnp_random_graph(10, 0.5)  # Example random graph
+
+    # Create a Graph instance and initialize with the NetworkX graph
+    graph = Graph()
+    graph.from_existing_graph(G)
+    
+    # Extract the statistics and convert to JSON string
+    stats_json = graph.to_json()
+    
+    # Return the stats as a JSON response
+    return stats_json  # Flask jsonify() will handle JSON string formatting automatically
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
