@@ -4,12 +4,12 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import React from 'react';
 import Home from './pages';
 import ExplorePage from './pages/explore';
-import {DataProvider} from './contexts/DataContext';
+
 
 
 function App() {
-  return (         
-    <DataProvider>
+  return (       
+    <>
     <Router>
       <Routes>
       <Route path='/' element={<Home />} exact/>
@@ -17,10 +17,8 @@ function App() {
       <Route path='explore/domains/:domainId' element={<ExplorePage />} exact/>
       </Routes>
     </Router>
-    </DataProvider>
+    </>
   );
 }
-
-
 
 export default App;
