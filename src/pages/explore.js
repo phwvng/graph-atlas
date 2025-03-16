@@ -7,10 +7,9 @@ const ExplorePage = () => {
   const { data } = useFetch('/graph-api');
 
   useEffect(() => {
-    console.log(data)
     if (data) {
-      console.log(data)
-      setDomainImages(data.graphs);
+      console.log(data);
+      setDomainImages(data);
     }
   }, [data]);
   return (

@@ -45,16 +45,16 @@ const Navbar = ({ toggle, isNewPage }) => {
               >About</NavLinks>
               </NavItem>
               <NavItem>
-                <NavLinks to='services'
+                <NavLinks to='features'
                 smooth={true}
                 duration={500}
                 spy={true}
                 exact='true'
                 offset={0}
-                >Services</NavLinks>
+                >Features</NavLinks>
               </NavItem>
               <NavItem>
-                <NavLinks to='submit-your-own'>Submit Your Own</NavLinks>
+                <NavLinks to='how-it-works'>How it works</NavLinks>
               </NavItem>
             </NavMenu>
             <NavBtn>

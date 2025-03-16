@@ -23,29 +23,29 @@ const DomainImage = ( { domain, onClick } ) => {
   
   return (
     <>
-      <DomainContainer id={domain.id} onClick={onClick}>
+      <DomainContainer id={domain.graph_type} onClick={onClick}>
         
-        <DomainHeader>{domain.title}</DomainHeader>
+        <DomainHeader>{domain.is_directed_int}</DomainHeader>
         <DomainImageContainer>
-          <DomainImg src={domain.url} alt={domain.alt} />
+          <DomainImg src='' alt='' />
         </DomainImageContainer>
 
         <DomainContent>
       <DatasetSize>
-        <DomainData label="Size" data={domain.size} />
+        <DomainData label="Size" data='3' />
       </DatasetSize>
 
       <DatasetComplexity>
-        <DomainData label="Complexity" data={domain.complexity} />
+        <DomainData label="Complexity" data='Simple' />
       </DatasetComplexity>
 
       <DatasetSource>
-        <DomainData label="Source" data={domain.source} />
+        <DomainData label="Source" data='Facebook' />
       </DatasetSource>
 
-        <TagContainer>
+        {/* <TagContainer>
           {domain.tags.map((tag) => (<DomainTag key={tag} color={generateTagColor(tag)}>#{tag}</DomainTag>))}
-          </TagContainer>
+          </TagContainer> */}
         </DomainContent>
 
       </DomainContainer> 

@@ -1,5 +1,6 @@
 import networkx as nx
 import random
+import uuid  # To generate a unique ID if desired
 from typing import Dict, Any, List
 from dataclasses import dataclass, field, asdict
 from networkx.algorithms.community import girvan_newman, modularity
@@ -9,6 +10,9 @@ import json
 
 @dataclass
 class Graph(nx.Graph):
+    # New id field, default is None but can be set to a unique value
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))  # Generates a unique ID by default
+    title: str = field(default="title")  # Title of the graph
     # Overview
     graph_type: int = field(init=False)
     is_directed_int: int = field(init=False)
@@ -214,19 +218,28 @@ class Graph(nx.Graph):
         """Get the values of all statistics."""
         return [getattr(self, field_name) for field_name in self.__dataclass_fields__]
     
-
-
     def to_json(self) -> str:
-        """Convert the graph's statistics to a JSON string."""
+        """Convert the graph's statistics and metadata to a JSON string in a list format."""
         try:
             # Ensure that statistics are extracted before converting to JSON
             self.extract_statistics()
 
-            # Convert dataclass fields to dictionary
-            stats_dict = asdict(self)
-            
-            # Return the JSON representation
-            return json.dumps(stats_dict, default=str)  # Handle non-serializable fields if any
+            # Create a dictionary with both metadata and statistics
+            graph_data = asdict(self)
+
+            # Custom handler for non-serializable objects
+            def custom_handler(obj):
+                # Handle specific cases where the object is not serializable
+                if isinstance(obj, set):
+                    return list(obj)  # Convert sets to lists
+                elif isinstance(obj, complex):
+                    return {"real": obj.real, "imag": obj.imag}  # Handle complex numbers
+                return str(obj)  # Default case
+
+            # Convert to JSON with indentation and custom handling for non-serializable objects
+            json_str = json.dumps([graph_data], default=custom_handler, indent=4)
+
+            return json_str
         except Exception as e:
             print(f"Error converting to JSON: {e}")
-            return "{}"
+            return "[]"
