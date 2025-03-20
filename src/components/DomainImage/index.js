@@ -23,16 +23,16 @@ const DomainImage = ( { domain, onClick } ) => {
   
   return (
     <>
-      <DomainContainer id={domain.graph_type} onClick={onClick}>
+      <DomainContainer id={domain.id} onClick={onClick}>
         
-        <DomainHeader>{domain.is_directed_int}</DomainHeader>
+        <DomainHeader>{domain.title}</DomainHeader>
         <DomainImageContainer>
-          <DomainImg src='' alt='' />
+          <DomainImg src={`require('../images/${domain.title}.svg').default`} alt='' />
         </DomainImageContainer>
 
         <DomainContent>
       <DatasetSize>
-        <DomainData label="Size" data='3' />
+        <DomainData label="Size" data={`Nodes: ${domain.n_nodes} Edges:${domain.n_edges}`} />
       </DatasetSize>
 
       <DatasetComplexity>

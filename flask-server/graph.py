@@ -44,6 +44,7 @@ class Graph(nx.Graph):
     node_attributes: int = field(init=False)
     number_of_isolates: int = field(init=False)
     density: float = field(init=False)
+    n_edges: int = field(init=False)
     edge_types: int = field(init=False)
     edge_attributes: int = field(init=False)
     n_parallel_edges: int = field(init=False)
