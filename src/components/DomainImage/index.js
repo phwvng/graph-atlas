@@ -27,12 +27,12 @@ const DomainImage = ( { domain, onClick } ) => {
         
         <DomainHeader>{domain.title}</DomainHeader>
         <DomainImageContainer>
-          <DomainImg src={`require('../images/${domain.title}.svg').default`} alt='' />
+          <DomainImg src={require(`../../images/movies.svg`).default} alt='' />
         </DomainImageContainer>
 
         <DomainContent>
       <DatasetSize>
-        <DomainData label="Size" data={`Nodes: ${domain.n_nodes} Edges:${domain.n_edges}`} />
+        <DomainData label="Size" data={`Nodes: ${domain.n_nodes} Edges: ${domain.n_edges}`} />
       </DatasetSize>
 
       <DatasetComplexity>
