@@ -14,18 +14,20 @@ export const ExploreContainer = styled.div`
 `;
 
 export const DomainBox = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  grid-gap: 16px; /* Adds space between items */
-  justify-content: flex-start; /* Align the items to the left */
-  align-items: start; /* Ensure items align at the top */
+  display: ${({ isGrid }) => (isGrid ? 'grid' : 'flex')};  /* Conditional display: grid or flex */
+  grid-template-columns: ${({ isGrid }) => (isGrid ? 'repeat(auto-fill, minmax(200px, 1fr))' : 'none')}; /* Apply grid-template-columns in grid view */
+  flex-direction: ${({ isGrid }) => (isGrid ? 'row' : 'column')}; /* Use column layout for list view */
+  grid-gap: 16px; /* Adds space between items in grid view */
+  justify-content: ${({ isGrid }) => (isGrid ? 'flex-start' : 'flex-start')}; /* Align the items to the left */
+  align-items: ${({ isGrid }) => (isGrid ? 'start' : 'flex-start')}; /* Align items at the top in both views */
   z-index: 3;
   max-width: 100%;
   max-height: 100%;
   padding: 8px 24px;
-  margin-top: 0;  /* Ensure there's no margin at the top */
-  margin-bottom: 0;  /* Remove any bottom margin */
+  margin-top: 0;
+  margin-bottom: 0;
 `;
+
 
 
 export const FormContainer = styled.form`

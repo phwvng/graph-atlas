@@ -6,11 +6,19 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const Explore = ( { domainImages } ) => {
   const [searchQuery, setSearchQuery] = useState('');
-
   const handleSearch = (e) => {
     e.preventDefault();
   }
 
+  const [gridView, setGridView] = useState(true);
+  const handleGridView = () => {
+    console.log("Grid View");
+    setGridView(true);
+  }
+  const handleListView = () => {
+    console.log("List View");
+    setGridView(false);
+  }
   const navigate = useNavigate();
   const { domainId } = useParams(); // Get the domain ID from the URL
   const [openDomainId, setOpenDomainId] = useState(null);
@@ -34,17 +42,18 @@ const Explore = ( { domainImages } ) => {
           <SearchButton type="submit">Search</SearchButton>
         </FormContainer>
         <ChangeViewContainer>
-            <GridView />
-            <ListView />
+            <GridView onClick={handleGridView} />
+            <ListView onClick={handleListView}/>
           </ChangeViewContainer>
 
         <Divider />
-        <DomainBox>
+        <DomainBox isGrid={gridView}>
          {(domainImages === null ? <h1>Loading...</h1> :
         domainImages.map((domain) => (
           domain.title.toLowerCase().startsWith(searchQuery.toLowerCase()) && (
             <React.Fragment key={domain.id}>
               <DomainImage
+                view = {gridView}
                 domain={domain}
                 onClick={() => navigate(`/explore/domains/${domain.id}`)} // Update URL on click
               />

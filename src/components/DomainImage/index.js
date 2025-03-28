@@ -13,7 +13,7 @@ const DomainData = ({ label, data }) => {
 
 
 
-const DomainImage = ( { domain, onClick } ) => {
+const DomainImage = ( { domain, onClick, view } ) => {
 
   const generateTagColor = (tag) => {
     const hash = Array.from(tag).reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -22,7 +22,7 @@ const DomainImage = ( { domain, onClick } ) => {
   };
   
   return (
-      <DomainContainer id={domain.id} onClick={onClick}>
+      <DomainContainer id={domain.id} onClick={onClick} view={view}>
         
         <DomainHeader>{domain.title}</DomainHeader>
         <DomainImageContainer>

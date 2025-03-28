@@ -2,13 +2,13 @@ import styled from 'styled-components';
 
 export const DomainContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: ${({ view }) => (view ? "column" : "row")}; /* Column for grid, row for list */
   justify-content: flex-start;
   align-items: center;
   background: #000;
   border-radius: 10px;
-  height: 280px;  /* Increased height to fit tags */
-  width: 240px;
+  height: ${({ view }) => (view ? "280px" : "120px")}; /* Taller for grid, shorter for list */
+  width: ${({ view }) => (view ? "240px" : "100%")}; /* 240px width for grid, 100% for list */
   padding: 15px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease-in-out;
