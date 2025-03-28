@@ -73,3 +73,28 @@ export const PreviewImage = styled.img`
     width: 100%;
     max-width: 250px;
     `;
+
+export const Metadata = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    `;
+export const MetadataItem = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    `;
+export const MetadataLabel = styled.p`
+    color: #0c0c0c;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 24px;
+    `;
+export const MetadataValue = styled.p`
+    color: #0c0c0c;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 24px;
+    `;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ExploreContainer, DomainBox, FormContainer, SearchBar, SearchButton } from './ExploreElements';
 import DomainImage from '../DomainImage';
-import { Nav, NavLogo } from '../Navbar/NavbarElements';
 import Datapreview from '../Datapreview';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -22,17 +21,11 @@ const Explore = ( { domainImages } ) => {
 
   return (
     <>
-      <Nav style={{background: '#0c0c0c'}}>
-          <NavLogo to="/">
-          GraphAtlas <i className="fa-solid fa-hexagon-nodes"></i>
-          </NavLogo>
-      </Nav>
-
       <ExploreContainer>
         <FormContainer onSubmit={handleSearch}>
           <SearchBar
             type="text"
-            placeholder="Search for a domain"
+            placeholder="Search for a dataset..."
             name="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value

@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 
 export const ExploreContainer = styled.div`
-  background: #0c0c0c;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -10,7 +9,6 @@ export const ExploreContainer = styled.div`
   height: 800px;
   position: relative;
   z-index: 1;
-  margin-top: 80px;
 `;
 
 export const DomainBox = styled.div`
@@ -20,7 +18,8 @@ export const DomainBox = styled.div`
     justify-content: center;
     align-items: center;
     z-index: 3;
-    max-width: 1000px;
+    max-width: 100%;
+    max-height: 100%;
     padding: 8px 24px;
     border-radius: 10px;
     border: 1px solid #01bf71;
