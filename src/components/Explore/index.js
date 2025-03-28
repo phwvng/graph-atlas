@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ExploreContainer, DomainBox, FormContainer, SearchBar, SearchButton } from './ExploreElements';
+import { ExploreContainer, DomainBox, FormContainer, SearchBar, SearchButton, Divider, ChangeViewContainer ,GridView, ListView } from './ExploreElements';
 import DomainImage from '../DomainImage';
 import Datapreview from '../Datapreview';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -20,7 +20,7 @@ const Explore = ( { domainImages } ) => {
 
 
   return (
-    <>
+    
       <ExploreContainer>
         <FormContainer onSubmit={handleSearch}>
           <SearchBar
@@ -33,8 +33,12 @@ const Explore = ( { domainImages } ) => {
           />
           <SearchButton type="submit">Search</SearchButton>
         </FormContainer>
+        <ChangeViewContainer>
+            <GridView />
+            <ListView />
+          </ChangeViewContainer>
 
-
+        <Divider />
         <DomainBox>
          {(domainImages === null ? <h1>Loading...</h1> :
         domainImages.map((domain) => (
@@ -53,7 +57,6 @@ const Explore = ( { domainImages } ) => {
           ))))}
      </DomainBox>
 </ExploreContainer>
-</>
   )
 }
 

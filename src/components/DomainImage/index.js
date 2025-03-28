@@ -22,7 +22,6 @@ const DomainImage = ( { domain, onClick } ) => {
   };
   
   return (
-    <>
       <DomainContainer id={domain.id} onClick={onClick}>
         
         <DomainHeader>{domain.title}</DomainHeader>
@@ -49,7 +48,6 @@ const DomainImage = ( { domain, onClick } ) => {
         </DomainContent>
 
       </DomainContainer> 
-    </>
   )
 }
 

@@ -9,6 +9,13 @@ const ExplorePage = () => {
   const [domainImages, setDomainImages] = useState([]);
   const { data } = useFetch('/graph-api');
 
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+    console.log('Sidebar collapsed:', isCollapsed);
+  };
+
   useEffect(() => {
     if (data) {
       console.log(data);
@@ -25,8 +32,8 @@ const ExplorePage = () => {
       </NavLogo>
     </Nav>
     <ContentWrapper>
-      <Sidebar>
-        <Filter />
+      <Sidebar isCollapsed={isCollapsed}>
+      <Filter checkCollapse={isCollapsed} onClick={toggleCollapse} />
       </Sidebar>
       <MainContent>
         <Explore domainImages={domainImages} />

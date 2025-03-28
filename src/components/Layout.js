@@ -13,9 +13,10 @@ export const ContentWrapper = styled.div`
 `;
 
 export const Sidebar = styled.div`
-  width: 25%; // Adjust size as needed
+  width: ${({ isCollapsed }) => (isCollapsed ? "10%" : "25%")};
   background: #333333;  // Dark gray background for sidebar
   color: #dcdcdc;  // Light gray text in the sidebar
+  position: relative;
 `;
 
 export const MainContent = styled.div`

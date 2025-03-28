@@ -7,7 +7,7 @@ export const DomainContainer = styled.div`
   align-items: center;
   background: #000;
   border-radius: 10px;
-  height: 300px;  /* Increased height to fit tags */
+  height: 280px;  /* Increased height to fit tags */
   width: 240px;
   padding: 15px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);

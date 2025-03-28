@@ -1,22 +1,18 @@
 import React from 'react'
-import { FilterBox, FilterContent, FilterItem, FilterLabel, FilterSelect } from './FilterElements'
+import { FilterBox, FilterH1, FilterContent, FilterItem, FilterLabel, FilterSelect, CollapseButton, ExpandButton } from './FilterElements'
 
-const Filter = ( domains ) => {
+const Filter = ( {checkCollapse, onClick} , domains ) => {
   return (
     <FilterBox>
-        <FilterContent>
-            <FilterItem>
-                <FilterLabel>Filters</FilterLabel>
-                <FilterSelect>
-                    <option value="all">All</option>
-                    <option value="web">Web</option>
-                    <option value="mobile">Mobile</option>
-                    <option value="desktop">Desktop</option>
-                </FilterSelect>
-            </FilterItem>
-        </FilterContent>
+      {checkCollapse ? (
+        <ExpandButton onClick={onClick} />  // Call the collapse function when clicked
+      ) : (
+        <CollapseButton onClick={onClick} />  // Call the collapse function when clicked
+      )}
       
+    <FilterH1>Filters</FilterH1>
     </FilterBox>
+
   )
 }
 
