@@ -35,11 +35,11 @@ const DomainImage = ( { domain, onClick, view } ) => {
       </DatasetSize>
 
       <DatasetComplexity>
-        <DomainData label="Complexity" data='Simple' />
+        <DomainData label="Complexity" data={`Node types: ${domain.node_types} Edge types: ${domain.edge_types}`} />
       </DatasetComplexity>
 
       <DatasetSource>
-        <DomainData label="Source" data='Facebook' />
+        <DomainData label="Source" data={domain.source} />
       </DatasetSource>
 
         {/* <TagContainer>

@@ -17,7 +17,7 @@ export const DomainBox = styled.div`
   display: ${({ isGrid }) => (isGrid ? 'grid' : 'flex')};  /* Conditional display: grid or flex */
   grid-template-columns: ${({ isGrid }) => (isGrid ? 'repeat(auto-fill, minmax(200px, 1fr))' : 'none')}; /* Apply grid-template-columns in grid view */
   flex-direction: ${({ isGrid }) => (isGrid ? 'row' : 'column')}; /* Use column layout for list view */
-  grid-gap: 16px; /* Adds space between items in grid view */
+  grid-gap: 24px; /* Adds space between items in grid view */
   justify-content: ${({ isGrid }) => (isGrid ? 'flex-start' : 'flex-start')}; /* Align the items to the left */
   align-items: ${({ isGrid }) => (isGrid ? 'start' : 'flex-start')}; /* Align items at the top in both views */
   z-index: 3;
@@ -39,6 +39,7 @@ export const FormContainer = styled.form`
   max-width: 1200px;
   position: relative;
   margin: 0 auto;
+  margin-top: -48px; /* Ensure no space pushing down the form */
   margin-bottom: -25px;
   gap: 10px;
   padding: 0; 
@@ -72,18 +73,21 @@ export const SearchButton = styled.button`
 export const Divider = styled.div`
   width: 100%;
   height: 2px;
-  background-color: rgba(255, 255, 255, 0.3); /* Lighter gray, more noticeable */
+  background-color: #01BF71; 
   margin: 16px 0; /* Adds some space above and below */
 `;
 
 export const GridView = styled(MdOutlineGridView)`
-  color: #01bf71;
+  color: ${({ isGrid }) => (isGrid ? '#fff' : '#01bf71')}; 
+  background-color: ${({ isGrid }) => (isGrid ? '#01bf71' : 'transparent')}; /* Change background color based on view */
+  border-radius: 25%;
   font-size: 24px;
   cursor: pointer;
   margin-left: auto; /* Align to the right */
   &:hover {
     color: #fff; /* Change color on hover */
   }
+  
 `;
 
 export const ChangeViewContainer = styled.div`
@@ -93,11 +97,54 @@ export const ChangeViewContainer = styled.div`
 `;
 
 export const ListView = styled(MdFormatListBulleted)`
-  color: #01bf71;
+  color: ${({ isGrid }) => (isGrid ? '#01bf71' : '#fff')};
+  background-color: ${({ isGrid }) => (isGrid ? 'transparent' : '#01bf71')}; /* Change background color based on view */
+  border-radius: 25%;
   font-size: 24px;
   cursor: pointer;
   margin-left: 10px; /* Space between icons */
   &:hover {
     color: #fff; /* Change color on hover */
   }
+`;
+
+export const SortWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+`;
+
+export const SortText = styled.p`
+  color: #fff;
+  font-size: 14px;
+  margin-right: 16px; /* Space between text and dropdown */
+  margin-top: 12px; /* Align with the dropdown */
+`;
+
+export const SortBy = styled.select`
+  max-width: 200px;
+  padding: 12px 18px;
+  border: none;
+  outline: none;
+  border-radius: 48px;
+  background: #01bf71;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  margin-right: auto; 
+  align-items: center; 
+  text-align: center;
+`;
+export const SortByOption = styled.option`
+  max-width: 200px;
+  padding: 16px 24px;
+  border: none;
+  outline: none;
+  border-radius: 50px;
+  background: #01bf71;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  
 `;

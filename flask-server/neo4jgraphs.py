@@ -107,10 +107,12 @@ class Neo4jGraphFetcher:
 
 # Neo4j database connection details
 URI = "neo4j+ssc://demo.neo4jlabs.com"
-datasets = ["movies", "northwind"]
+datasets = ["northwind", "movies"]
 
 # Fetch all graphs using caching
 graph_list = Neo4jGraphFetcher.fetch_all_graphs(URI, datasets)
 
 # Extract statistics from each Graph object
+for graph in graph_list:
+    graph.source = "neo4j"
 stats_list = [graph.get_statistics() for graph in graph_list]

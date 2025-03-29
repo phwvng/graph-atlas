@@ -46,7 +46,8 @@ export const NavLogo = styled(LinkR)`
 
   &:hover {
       transition: all 0.2s ease-in-out;
-      color: #01bf71;
+      
+      color: #017c47;
       transform: scale(1.1);
   }
 `;

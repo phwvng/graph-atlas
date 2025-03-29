@@ -37,7 +37,7 @@ export const FilterSelect = styled.select`
 
     export const CollapseButton = styled(FaChevronCircleLeft)`
     font-size: 24px;
-    color: #fff;
+    color: #01BF71;
     cursor: pointer;
     position: absolute;  /* Position it relative to FilterBox */
     right: 10px;  /* Align it to the right of the FilterBox */
@@ -48,7 +48,7 @@ export const FilterSelect = styled.select`
 
 export const ExpandButton = styled(FaChevronCircleRight)`
     font-size: 24px;
-    color: #fff;
+    color: #01BF71;
     cursor: pointer;
     position: absolute;  /* Position it relative to FilterBox */
     right: 10px;  /* Align it to the right of the FilterBox */

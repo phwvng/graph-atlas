@@ -5,12 +5,12 @@ export const DomainContainer = styled.div`
   flex-direction: ${({ view }) => (view ? "column" : "row")}; /* Column for grid, row for list */
   justify-content: flex-start;
   align-items: center;
-  background: #000;
+  background: #2c2c2c;  /* Dark gray background */
   border-radius: 10px;
   height: ${({ view }) => (view ? "280px" : "120px")}; /* Taller for grid, shorter for list */
-  width: ${({ view }) => (view ? "240px" : "100%")}; /* 240px width for grid, 100% for list */
+  width: ${({ view }) => (view ? "225px" : "100%")}; /* 240px width for grid, 100% for list */
   padding: 15px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);  /* Subtle shadow to lift the item */
   transition: all 0.2s ease-in-out;
   color: #fff;
   overflow: hidden;
@@ -24,36 +24,58 @@ export const DomainContainer = styled.div`
 export const DomainHeader = styled.h1`
   font-size: 1rem;
   margin-bottom: 12px;
+  color: #dcdcdc;
+  font-weight: bold;
+  text-transform: capitalize;
 `;
 
 export const DomainImageContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 10px;
 `;
 
 export const DomainImg = styled.img`
-  height: 80px;
-  width: 80px;
-  margin-bottom: 6px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
 `;
-
 export const DomainContent = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  text-align: left;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-top: 10px;
 `;
 
-export const DatasetSize = styled.h2`
-  font-size: 0.7rem;
+
+export const DatasetSize = styled.p`
+  font-size: 0.8rem;
   margin-bottom: 6px;
+  color: #dcdcdc;
 `;
 
-export const DatasetComplexity = styled.h2`
-  font-size: 0.7rem;
+export const DatasetComplexity = styled.p`
+  font-size: 0.8rem;
   margin-bottom: 6px;
+  color: #dcdcdc;
 `;
+
+export const DatasetSource = styled.p`
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+  color: #dcdcdc;
+`;
+
+export const TagContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+  width: 100%;
+`;
+
 
 export const DomainTag = styled.div`
   background-color: ${({ color }) => color};
@@ -80,24 +102,6 @@ export const DomainTag = styled.div`
   }
 `;
 
-
-export const TagContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 10px 0;
-  justify-content: flex-start;
-  font-size: 1rem;
-  width: 100%;
-  overflow: hidden;
-  
-`;
-
-export const DatasetSource = styled.h2`
-  font-size: 0.7rem;
-  margin-bottom: 6px;
-
-`;
 
 
 export const Label = styled.span`

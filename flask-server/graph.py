@@ -13,6 +13,7 @@ class Graph(nx.Graph):
     # New id field, default is None but can be set to a unique value
     id: str = field(default_factory=lambda: str(uuid.uuid4()))  # Generates a unique ID by default
     title: str = field(default="title")  # Title of the graph
+    source: str = field(default="source")  # Source of the graph
     # Overview
     graph_type: int = field(init=False)
     is_directed_int: int = field(init=False)
