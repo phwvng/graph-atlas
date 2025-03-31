@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   FilterBox,
   FilterH1,
@@ -33,12 +33,10 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange }) => {
   const [selectedSources, setSelectedSources] = useState({});
 
   // Function to update filtered datasets based on selected filters.
-  const updateFilters = () => {
-    // Get the active filter keys.
+  const updateFilters = useCallback(() => {
     const activeDomainFilters = Object.keys(selectedDomains).filter(key => selectedDomains[key]);
     const activeSourceFilters = Object.keys(selectedSources).filter(key => selectedSources[key]);
 
-    // Filter datasets: if no filters are active for a category, include all.
     let filtered = domains;
     if (activeDomainFilters.length > 0) {
       filtered = filtered.filter(item => activeDomainFilters.includes(item.title));
@@ -47,11 +45,10 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange }) => {
       filtered = filtered.filter(item => activeSourceFilters.includes(item.source));
     }
 
-    // Send the filtered data back to the parent.
     if (onFilterChange) {
       onFilterChange(filtered);
     }
-  };
+  }, [selectedDomains, selectedSources, domains, onFilterChange]);
 
   // Handle change for domain checkboxes.
   const handleDomainChange = (e) => {
@@ -68,7 +65,7 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange }) => {
   // Update filters whenever selections change.
   useEffect(() => {
     updateFilters();
-  }, [selectedDomains, selectedSources, domains]);
+  }, [updateFilters]);
 
   return (
     <FilterBox>

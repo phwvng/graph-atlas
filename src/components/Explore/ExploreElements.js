@@ -134,16 +134,14 @@ export const SortBy = styled.select`
   margin-right: auto; 
   align-items: center; 
   text-align: center;
+  z-index: 3;
+  &:hover {
+    background: #fff;
+    color: #010606;
+  }
 `;
 export const SortByOption = styled.option`
-  padding: 16px 24px;
-  border: none;
-  outline: none;
-  border-radius: 50px;
   background: #01bf71;
   color: #fff;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  text-decoration: none;
-  
 `;

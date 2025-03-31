@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Explore from '../components/Explore';
 import useFetch from '../hooks/useFetch';
 import Filter from '../components/Filter';
@@ -6,48 +6,37 @@ import { Layout, Sidebar, MainContent, ContentWrapper } from '../components/Layo
 import { Nav, NavLogo } from '../components/Navbar/NavbarElements';
 
 const ExplorePage = () => {
-  const [domainImages, setDomainImages] = useState([]);
-  const [filteredImages, setFilteredImages] = useState([]);
   const { data } = useFetch('/graph-api');
   const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
-    console.log('Sidebar collapsed:', isCollapsed);
-  };
+  const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     if (data) {
-      console.log(data);
-      setDomainImages(data);
-      setFilteredImages(data); // initialize filteredImages with all data
+      setFilteredData(data);  // Initialize filtered data
     }
   }, [data]);
 
-  // This callback will be passed to the Filter component.
-  // It receives filtered data from Filter and updates our state.
-  const handleFilterChange = (filteredData) => {
-    setFilteredImages(filteredData);
-  };
+  const toggleCollapse = () => setIsCollapsed(!isCollapsed);
+
+  // 🟢 Memoize the filteredData to prevent unnecessary re-renders in Explore
+  const stableFilteredData = useMemo(() => filteredData, [filteredData]);
 
   return (
     <Layout>
       <Nav style={{ background: "rgb(1, 191, 113)", flexShrink: 0 }}>
-        <NavLogo to="/">
-          GraphAtlas <i className="fa-solid fa-hexagon-nodes"></i>
-        </NavLogo>
+        <NavLogo to="/">GraphAtlas <i className="fa-solid fa-hexagon-nodes"></i></NavLogo>
       </Nav>
       <ContentWrapper>
         <Sidebar isCollapsed={isCollapsed}>
-          <Filter 
-            checkCollapse={isCollapsed} 
-            onClick={toggleCollapse} 
-            domains={domainImages}
-            onFilterChange={handleFilterChange} // Pass callback here
+          <Filter
+            checkCollapse={isCollapsed}
+            onClick={toggleCollapse}
+            domains={data || []}  // Pass original data for filtering
+            onFilterChange={setFilteredData}  // Update filtered data
           />
         </Sidebar>
         <MainContent>
-          <Explore domainImages={filteredImages} />
+          <Explore domainImages={stableFilteredData} /> {/* Pass stable data */}
         </MainContent>
       </ContentWrapper>
     </Layout>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Overlay, PreviewButton, PreviewContainer, PreviewHeader, PreviewTitle, PreviewSubtitle, PreviewContent, PreviewImage, PreviewDescription, Metadata, MetadataItem, MetadataLabel, MetadataValue } from './DatapreviewElements';
+import { Overlay, PreviewButton, PreviewContainer, PreviewHeader, PreviewTitle, PreviewContent, PreviewImage, PreviewDescription, Metadata, MetadataItem, MetadataLabel, MetadataValue, DownloadButton } from './DatapreviewElements';
 import ReactDom from 'react-dom';
 
 const Datapreview = ({ dataset, open, onClose  }) => {
@@ -10,10 +10,9 @@ const Datapreview = ({ dataset, open, onClose  }) => {
     <>
     <Overlay></Overlay>
     <PreviewContainer>
-      <PreviewButton onClick={onClose}>Close</PreviewButton>
+      <PreviewButton onClick={onClose}>Back</PreviewButton>
       <PreviewHeader>
         <PreviewTitle>{dataset.title}</PreviewTitle>
-        <PreviewSubtitle>{dataset.subtitle || 'No subtitle available'}</PreviewSubtitle>
       </PreviewHeader>
       <PreviewContent>
         <PreviewImage src={dataset.url} alt={dataset.title} />
@@ -32,7 +31,21 @@ const Datapreview = ({ dataset, open, onClose  }) => {
         <MetadataLabel>Edge types</MetadataLabel>
         <MetadataValue>{dataset.edge_types}</MetadataValue>
       </MetadataItem>
+      <MetadataItem>
+        <MetadataLabel>Node types</MetadataLabel>
+        <MetadataValue>{dataset.node_types}</MetadataValue>
+      </MetadataItem>
+      <MetadataItem>
+        <MetadataLabel>Assortativity</MetadataLabel>
+        <MetadataValue>{dataset.assortativity}</MetadataValue>
+      </MetadataItem>
+      <MetadataItem>
+        <MetadataLabel>Density</MetadataLabel>
+        <MetadataValue>{dataset.density}</MetadataValue>
+      </MetadataItem>
     </Metadata>
+    <DownloadButton>Download Dataset</DownloadButton>
+
     </PreviewContainer>
     </>,
     document.getElementById('portal')

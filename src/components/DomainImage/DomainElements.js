@@ -1,19 +1,41 @@
 import styled from 'styled-components';
 
+// Reusable Card Component
+const Card = styled.div`
+  background-color: #3e3e3e;
+  padding: 6px 10px;
+  border-radius: 6px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: ${({ view }) => (view ? 'column' : 'row')};
+`;
+
 export const DomainContainer = styled.div`
   display: flex;
-  flex-direction: ${({ view }) => (view ? "column" : "row")}; /* Column for grid, row for list */
+  flex-direction: ${({ view }) => (view ? 'column' : 'row')};
   justify-content: flex-start;
-  align-items: center;
-  background: #2c2c2c;  /* Dark gray background */
-  border-radius: 10px;
-  height: ${({ view }) => (view ? "280px" : "120px")}; /* Taller for grid, shorter for list */
-  width: ${({ view }) => (view ? "225px" : "100%")}; /* 240px width for grid, 100% for list */
-  padding: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);  /* Subtle shadow to lift the item */
+  align-items: stretch;
+  background: #2c2c2c;
+  border-radius: 8px;
+  height: ${({ view }) => (view ? '250px' : '100px')};
+  width: ${({ view }) => (view ? '200px' : '100%')};
+  padding: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease-in-out;
   color: #fff;
   overflow: hidden;
+  margin: 6px;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    padding: 8px;
+  }
 
   &:hover {
     transform: scale(1.02);
@@ -22,71 +44,108 @@ export const DomainContainer = styled.div`
 `;
 
 export const DomainHeader = styled.h1`
-  font-size: 1rem;
-  margin-bottom: 12px;
-  color: #dcdcdc;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  color: #fff;
   font-weight: bold;
   text-transform: capitalize;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 `;
 
-export const DomainImageContainer = styled.div`
+export const DomainContentWrapper = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  width: 100%;
+  height: ${({ view }) => (view ? '100%' : 'calc(100% - 35px)')};
+  box-sizing: border-box;
 `;
 
-export const DomainImg = styled.img`
-  height: 50px;
-  width: 50px;
-  border-radius: 50%;
-`;
 export const DomainContent = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-between;
   width: 100%;
-  margin-top: 10px;
+  margin-top: 6px;
 `;
 
-
-export const DatasetSize = styled.p`
-  font-size: 0.8rem;
-  margin-bottom: 6px;
-  color: #dcdcdc;
+export const DatasetStatsContainer = styled.div`
+  display: flex;
+  flex-wrap: ${({ view }) => (view ? 'wrap' : 'nowrap')};
+  justify-content: ${({ view }) => (view ? 'space-between' : 'flex-start')};
+  width: 100%;
+  margin-bottom: 4px;
 `;
 
-export const DatasetComplexity = styled.p`
-  font-size: 0.8rem;
-  margin-bottom: 6px;
-  color: #dcdcdc;
+export const DatasetStatCard = styled(Card)`
+  width: ${({ view }) => (view ? '48%' : 'auto')};
+  min-width: 80px;
+  margin-bottom: ${({ view }) => (view ? '6px' : '0')};
 `;
 
-export const DatasetSource = styled.p`
-  font-size: 0.8rem;
-  margin-bottom: 10px;
+export const StatLabel = styled.p`
+  font-size: 0.7rem;
   color: #dcdcdc;
+  text-align: center;
+`;
+
+export const StatValue = styled.p`
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #fff;
+`;
+
+export const ComplexityContainer = styled.div`
+  display: flex;
+  flex-wrap: ${({ view }) => (view ? 'wrap' : 'nowrap')};
+  justify-content: ${({ view }) => (view ? 'space-between' : 'flex-start')};
+  width: 100%;
+  margin-bottom: 4px;
+`;
+
+export const ComplexityCard = styled(Card)`
+  width: ${({ view }) => (view ? '48%' : 'auto')};
+  min-width: 80px;
+`;
+
+export const SourceContainer = styled.div`
+  margin-top: 4px;
+`;
+
+export const SourceCard = styled(Card)`
+  width: 100%;
+`;
+
+export const TagWrapper = styled.div`
+  min-height: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4px;
 `;
 
 export const TagContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-start;
+  gap: 4px;
+  justify-content: ${({ view }) => (view ? 'center' : 'flex-start')};
   width: 100%;
 `;
-
 
 export const DomainTag = styled.div`
   background-color: ${({ color }) => color};
   color: white;
-  padding: 4px 8px;  /* Reduced padding for a tighter fit */
-  border-radius: 5px;
+  padding: 3px 5px;
+  border-radius: 4px;
   font-weight: bold;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-  font-size: 0.8em;  /* Slightly increased font size for better readability */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 0.7rem;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -96,23 +155,7 @@ export const DomainTag = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
 
-
   &:hover {
     opacity: 0.8;
   }
-`;
-
-
-
-export const Label = styled.span`
-  font-family: 'Nova Square', sans-serif;
-  margin-right: 10px; /* Optional: Add some space between the label and the data */
-  font-weight: bold;
-`;
-
-export const DataValue = styled.span`
-  font-family: 'Nova Square', sans-serif;
-  text-align: right;
-  width: 100%; /* If necessary, ensure data aligns right */
-  font-weight: normal;
 `;
