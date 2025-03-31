@@ -16,8 +16,8 @@ useEffect(() => {
 
   const sortFunctions = {
     name: (a, b) => a.title.localeCompare(b.title),
-    nodes: (a, b) => (a.n_nodes?.length || 0) - (b.n_nodes?.length || 0),  // Ascending order
-    edges: (a, b) => (a.n_edges?.length || 0) - (b.n_edges?.length || 0),  // Ascending order
+    nodes: (a, b) => (b.n_nodes || 0) - (a.n_nodes || 0),  // Ascending order
+    edges: (a, b) => (b.n_edges || 0) - (a.n_edges || 0),  // Ascending order
   };
 
   const sorted = [...domainImages].sort(sortFunctions[sortOption]);

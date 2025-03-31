@@ -85,8 +85,16 @@ class Graph(nx.Graph):
             print(f"Error calculating modularity: {e}")
             return 0
 
-    def extract_statistics(self, testing=False) -> None:
-        """Extract statistics from the graph."""
+    def extract_statistics(self, testing=False, force_recalculate=False) -> None:
+        """ Extract statistics from the graph (cache results if already computed). """
+        if hasattr(self, "_cached_stats") and not force_recalculate:
+            return  # If stats are already cached, return without recalculating.
+
+        # Perform the statistics extraction as normal
+        # [Insert original statistics calculation code here...]
+        
+        # Cache the result
+        self._cached_stats = True
         # Topological Measures
         self.n_nodes = self.number_of_nodes()
         self.n_edges = self.number_of_edges()
@@ -213,8 +221,10 @@ class Graph(nx.Graph):
 
     def get_statistics(self, testing=False) -> Dict[str, Any]:
         """Convert the statistics to a dictionary format."""
-        self.extract_statistics(testing)
+        if not hasattr(self, "_cached_stats"):
+            self.extract_statistics(testing)
         return {field_name: getattr(self, field_name) for field_name in self.__dataclass_fields__}
+
 
     def get_statistics_values(self) -> List[Any]:
         """Get the values of all statistics."""

@@ -17,6 +17,7 @@ export const Sidebar = styled.div`
   background: #333333;  // Dark gray background for sidebar
   color: #dcdcdc;  // Light gray text in the sidebar
   position: relative;
+  
 `;
 
 export const MainContent = styled.div`

@@ -24,10 +24,11 @@ const DomainImage = ( { domain, onClick, view } ) => {
   return (
       <DomainContainer id={domain.id} onClick={onClick} view={view}>
         
-        <DomainHeader>{domain.title}</DomainHeader>
         <DomainImageContainer>
           <DomainImg src={require(`../../images/movies.svg`).default} alt='' />
         </DomainImageContainer>
+
+        <DomainHeader>{domain.title}</DomainHeader>
 
         <DomainContent>
       <DatasetSize>

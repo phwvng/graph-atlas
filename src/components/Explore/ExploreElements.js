@@ -121,7 +121,7 @@ export const SortText = styled.p`
 `;
 
 export const SortBy = styled.select`
-  max-width: 200px;
+  width: 100px;
   padding: 12px 18px;
   border: none;
   outline: none;
@@ -136,7 +136,6 @@ export const SortBy = styled.select`
   text-align: center;
 `;
 export const SortByOption = styled.option`
-  max-width: 200px;
   padding: 16px 24px;
   border: none;
   outline: none;

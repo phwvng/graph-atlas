@@ -1,7 +1,7 @@
 import os
 import networkx as nx
 from neo4j import GraphDatabase
-import pickle
+from joblib import dump, load  # Use joblib for faster serialization
 from graph import Graph
 
 
@@ -11,7 +11,7 @@ class Neo4jGraphFetcher:
         self.dataset = dataset
         self.auth = (username or dataset, password or dataset)  # Allow custom credentials
         self.graph_directory = graph_directory
-        self.graph_file = os.path.join(self.graph_directory, f"{self.dataset}_graph.gpickle")
+        self.graph_file = os.path.join(self.graph_directory, f"{self.dataset}_graph.joblib")  # Use .joblib extension for faster serialization
         self.G = None  # Will be set later
 
         # Ensure the directory exists
@@ -29,9 +29,7 @@ class Neo4jGraphFetcher:
         """Loads graph from cache or fetches from Neo4j if missing."""
         if os.path.exists(self.graph_file):
             print(f"Loading cached graph for {self.dataset} from {self.graph_file}")
-            with open(self.graph_file, "rb") as f:
-                graph_data = pickle.load(f)
-                self.G = nx.from_dict_of_dicts(graph_data)
+            self.G = load(self.graph_file)  # Load the graph using joblib
         else:
             print(f"Fetching graph for {self.dataset} from Neo4j...")
             self.fetch_graph()
@@ -39,10 +37,9 @@ class Neo4jGraphFetcher:
         
         return self.G
 
-
     def fetch_graph(self):
         """Fetches nodes and relationships from Neo4j and stores them in NetworkX graph."""
-        self.G = nx.DiGraph()
+        self.G = nx.DiGraph()  # Directed graph, change to nx.Graph() if undirected is needed
         try:
             with self.driver.session() as session:
                 nodes_query = "MATCH (n) RETURN id(n) AS id, labels(n) AS labels, properties(n) AS props"
@@ -70,15 +67,12 @@ class Neo4jGraphFetcher:
             raise
 
     def save_graph(self):
-            """Saves the NetworkX graph as a gpickle file."""
-            try:
-                with open(self.graph_file, "wb") as f:
-                    pickle.dump(nx.to_dict_of_dicts(self.G), f)
-                print(f"Graph saved as {self.graph_file}")
-            except Exception as e:
-                print(f"Error saving graph: {e}")
-
-    
+        """Saves the NetworkX graph using joblib."""
+        try:
+            dump(self.G, self.graph_file)  # Save the graph using joblib
+            print(f"Graph saved as {self.graph_file}")
+        except Exception as e:
+            print(f"Error saving graph: {e}")
 
     def close(self):
         """Closes the Neo4j driver connection."""
@@ -105,14 +99,3 @@ class Neo4jGraphFetcher:
 
         return graph_objects  # Return list of Graph objects
 
-# Neo4j database connection details
-URI = "neo4j+ssc://demo.neo4jlabs.com"
-datasets = ["northwind", "movies"]
-
-# Fetch all graphs using caching
-graph_list = Neo4jGraphFetcher.fetch_all_graphs(URI, datasets)
-
-# Extract statistics from each Graph object
-for graph in graph_list:
-    graph.source = "neo4j"
-stats_list = [graph.get_statistics() for graph in graph_list]
