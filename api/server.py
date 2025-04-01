@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 from graph import Graph  # Import the custom Graph class
 import networkx as nx
 from neo4j import GraphDatabase
@@ -54,6 +55,9 @@ app = Flask(__name__)
 @app.route('/graph-api', methods=['GET'])
 def get_graph_stats():
     return jsonify(stats_list)
+
+def handler(request, context):
+    return app(request.environ, context)
 
 if __name__ == '__main__':
     app.run(debug=True)
