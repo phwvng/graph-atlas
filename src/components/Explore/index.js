@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useView } from '../../viewContext'; // Import ViewContext
 import {
   ExploreContainer,
   DomainBox,
@@ -19,9 +20,9 @@ import DomainImage from '../DomainImage';
 import Datapreview from '../Datapreview';
 
 const Explore = ({ domainImages }) => {
+  const { view, setView } = useView(); // Use view context instead of state
   const [sortOption, setSortOption] = useState('name');
   const [searchQuery, setSearchQuery] = useState('');
-  const [gridView, setGridView] = useState(true);
 
   const navigate = useNavigate();
   const { domainId } = useParams();
@@ -31,7 +32,6 @@ const Explore = ({ domainImages }) => {
     setOpenDomainId(domainId || null);
   }, [domainId]);
 
-  // ✅ Memoized sorting to avoid unnecessary re-renders
   const sortedDomainImages = useMemo(() => {
     if (!domainImages || domainImages.length === 0) return [];
 
@@ -68,13 +68,13 @@ const Explore = ({ domainImages }) => {
       </FormContainer>
 
       <ChangeViewContainer>
-        <GridView onClick={() => setGridView(true)} isGrid={gridView} />
-        <ListView onClick={() => setGridView(false)} isGrid={gridView} />
+        <GridView onClick={() => setView(true)} isGrid={view} />
+        <ListView onClick={() => setView(false)} isGrid={view} />
       </ChangeViewContainer>
 
       <Divider />
 
-      <DomainBox isGrid={gridView}>
+      <DomainBox isGrid={view}>
         {sortedDomainImages
           .filter((domain) =>
             domain.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -82,7 +82,6 @@ const Explore = ({ domainImages }) => {
           .map((domain) => (
             <React.Fragment key={domain.id}>
               <DomainImage
-                view={gridView}
                 domain={domain}
                 onClick={() => navigate(`/explore/domains/${domain.id}`)}
               />

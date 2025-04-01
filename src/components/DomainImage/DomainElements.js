@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useView } from '../../viewContext';
 
 // Reusable Card Component
 const Card = styled.div`
@@ -11,18 +12,18 @@ const Card = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: ${({ view }) => (view ? 'column' : 'row')};
+  flex-direction: ${() => (useView().view ? 'column' : 'row')};
 `;
 
 export const DomainContainer = styled.div`
   display: flex;
-  flex-direction: ${({ view }) => (view ? 'column' : 'row')};
+  flex-direction: ${() => (useView().view ? 'column' : 'row')};
   justify-content: flex-start;
   align-items: stretch;
   background: #2c2c2c;
   border-radius: 8px;
-  height: ${({ view }) => (view ? '250px' : '100px')};
-  width: ${({ view }) => (view ? '200px' : '100%')};
+  height: ${() => (useView().view ? '250px' : 'auto')};
+  width: ${() => (useView().view ? '200px' : '100%')};
   padding: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease-in-out;
@@ -30,6 +31,7 @@ export const DomainContainer = styled.div`
   overflow: hidden;
   margin: 6px;
   box-sizing: border-box;
+  position: relative;
 
   @media (max-width: 768px) {
     width: 100%;
@@ -62,8 +64,9 @@ export const DomainContentWrapper = styled.div`
   justify-content: space-between;
   flex-grow: 1;
   width: 100%;
-  height: ${({ view }) => (view ? '100%' : 'calc(100% - 35px)')};
+  height: auto;
   box-sizing: border-box;
+  position: relative;
 `;
 
 export const DomainContent = styled.div`
@@ -76,49 +79,63 @@ export const DomainContent = styled.div`
 
 export const DatasetStatsContainer = styled.div`
   display: flex;
-  flex-wrap: ${({ view }) => (view ? 'wrap' : 'nowrap')};
-  justify-content: ${({ view }) => (view ? 'space-between' : 'flex-start')};
+  flex-wrap: wrap;
+  justify-content: space-between;
   width: 100%;
   margin-bottom: 4px;
 `;
 
 export const DatasetStatCard = styled(Card)`
-  width: ${({ view }) => (view ? '48%' : 'auto')};
+  width: 48%;
   min-width: 80px;
-  margin-bottom: ${({ view }) => (view ? '6px' : '0')};
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: ${() => (useView().view ? 'center' : 'space-between')};
+  padding: ${() => (useView().view ? '6px 10px' : '6px 14px')};
 `;
 
 export const StatLabel = styled.p`
   font-size: 0.7rem;
   color: #dcdcdc;
-  text-align: center;
+  text-align: ${() => (useView().view ? 'center' : 'left')};
 `;
 
 export const StatValue = styled.p`
   font-size: 0.8rem;
   font-weight: bold;
   color: #fff;
+  text-align: ${() => (useView().view ? 'center' : 'right')};
 `;
 
 export const ComplexityContainer = styled.div`
   display: flex;
-  flex-wrap: ${({ view }) => (view ? 'wrap' : 'nowrap')};
-  justify-content: ${({ view }) => (view ? 'space-between' : 'flex-start')};
+  flex-wrap: wrap;
+  justify-content: space-between;
   width: 100%;
   margin-bottom: 4px;
 `;
 
 export const ComplexityCard = styled(Card)`
-  width: ${({ view }) => (view ? '48%' : 'auto')};
+  width: 48%;
   min-width: 80px;
+  display: flex;
+  justify-content: ${() => (useView().view ? 'center' : 'space-between')};
+  padding: ${() => (useView().view ? '6px 10px' : '6px 14px')};
 `;
 
 export const SourceContainer = styled.div`
   margin-top: 4px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 `;
 
 export const SourceCard = styled(Card)`
   width: 100%;
+  min-height: ${() => (useView().view ? '40px' : '30px')};
+  display: flex;
+  justify-content: ${() => (useView().view ? 'center' : 'space-between')};
+  padding: ${() => (useView().view ? '6px 10px' : '6px 14px')};
 `;
 
 export const TagWrapper = styled.div`
@@ -126,14 +143,16 @@ export const TagWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 4px;
+  margin-top: 8px;
+  width: 100%;
+  position: relative;
 `;
 
 export const TagContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  justify-content: ${({ view }) => (view ? 'center' : 'flex-start')};
+  justify-content: center;
   width: 100%;
 `;
 

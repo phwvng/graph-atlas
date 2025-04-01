@@ -17,7 +17,8 @@ import {
   DomainTag
 } from './DomainElements';
 
-const DomainImage = ({ domain, onClick, view }) => {
+const DomainImage = ({ domain, onClick }) => {
+
   const generateTagColor = (tag) => {
     const hash = Array.from(tag).reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const hue = hash % 360;
@@ -25,30 +26,30 @@ const DomainImage = ({ domain, onClick, view }) => {
   };
 
   return (
-    <DomainContainer id={domain.id} onClick={onClick} view={view}>
-      <DomainHeader view={view}>{domain.title}</DomainHeader>
+    <DomainContainer id={domain.id} onClick={onClick}>
+      <DomainHeader>{domain.title}</DomainHeader>
 
-      <DomainContentWrapper view={view}>
+      <DomainContentWrapper>
         <DomainContent>
           {/* Dataset Stats Section */}
-          <DatasetStatsContainer view={view}>
-            <DatasetStatCard view={view}>
+          <DatasetStatsContainer>
+            <DatasetStatCard>
               <StatLabel>Nodes</StatLabel>
               <StatValue>{domain.n_nodes}</StatValue>
             </DatasetStatCard>
-            <DatasetStatCard view={view}>
+            <DatasetStatCard>
               <StatLabel>Edges</StatLabel>
               <StatValue>{domain.n_edges}</StatValue>
             </DatasetStatCard>
           </DatasetStatsContainer>
 
           {/* Complexity Stats Section */}
-          <ComplexityContainer view={view}>
-            <ComplexityCard view={view}>
+          <ComplexityContainer>
+            <ComplexityCard>
               <StatLabel>Node Types</StatLabel>
               <StatValue>{domain.node_types}</StatValue>
             </ComplexityCard>
-            <ComplexityCard view={view}>
+            <ComplexityCard>
               <StatLabel>Edge Types</StatLabel>
               <StatValue>{domain.edge_types}</StatValue>
             </ComplexityCard>
@@ -56,7 +57,7 @@ const DomainImage = ({ domain, onClick, view }) => {
 
           {/* Source Section */}
           <SourceContainer>
-            <SourceCard view={view}>
+            <SourceCard>
               <StatLabel>Source</StatLabel>
               <StatValue>{domain.source}</StatValue>
             </SourceCard>
