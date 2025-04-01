@@ -145,3 +145,4 @@ export const SortByOption = styled.option`
   color: #fff;
   cursor: pointer;
 `;
+

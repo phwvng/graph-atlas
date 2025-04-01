@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { FaFileUpload } from 'react-icons/fa';
 
 export const Layout = styled.div`
   display: flex;
@@ -25,4 +26,14 @@ export const MainContent = styled.div`
   background: #1c1c1c;
 `;
 
+export const UploadButton = styled(FaFileUpload)`
+  color: #ffffff;  // White icon color
+  font-size: 30px;
+  cursor: pointer;
+  margin: 10px;
+  &:hover {
+    color: #017c47;  // Change to green on hover
+    transform: scale(1.1);
+  }
 
+`;

@@ -16,6 +16,7 @@ function App() {
       <Route path='/' element={<Home />} exact/>
       <Route path='explore' element={<ExplorePage  />} exact/>
       <Route path='explore/domains/:domainId' element={<ExplorePage />} exact/>
+      <Route path='explore/upload' element={<ExplorePage />} exact/>
       </Routes>
     </Router>
     </ViewProvider>
