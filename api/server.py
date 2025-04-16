@@ -56,6 +56,4 @@ app = Flask(__name__)
 def get_graph_stats():
     return jsonify(stats_list)
 
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  # Default to 5000 if PORT isn't set
-    app.run(debug=True, host="0.0.0.0", port=port)
+
