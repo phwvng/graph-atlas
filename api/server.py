@@ -1,21 +1,35 @@
+import threading
 from flask import Flask, jsonify
 import sqlite3
 import json
-from graph import Graph  # Your custom class
-from neo4jgraphs import Neo4jGraphFetcher  # Your fetcher
-import networkx as nx
+import os
+from dotenv import load_dotenv
+from concurrent.futures import ThreadPoolExecutor
+import time  # To simulate continuous job checking
+
+from graph import Graph  # Your custom class (Graph)
+from neo4jgraphs import Neo4jGraphFetcher  # Neo4j fetcher
+from supabasegraphs import SupabaseGraphFetcher  # Supabase fetcher
+from scheduler import JobScheduler, GraphJob
 
 # -------------------- CONFIG --------------------
 DB_PATH = "graphs.db"
 URI = "neo4j+ssc://demo.neo4jlabs.com"
 DATASETS = ["northwind", "movies", "gameofthrones", "stackoverflow", "recommendations", "fincen", "twitter", "neoflix", "wordnet"]
 
+# Load Supabase credentials from .env
+load_dotenv()
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+job_scheduler = JobScheduler()
+
 # -------------------- INIT DB --------------------
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
-    # Create the graphs table if it doesn't exist
+    # Graph cache table
     c.execute('''
         CREATE TABLE IF NOT EXISTS graphs (
             id TEXT PRIMARY KEY,
@@ -25,7 +39,7 @@ def init_db():
         )
     ''')
 
-    # Create the datasets table to track the datasets
+    # Fetched datasets tracker (Neo4j + Supabase)
     c.execute('''
         CREATE TABLE IF NOT EXISTS datasets (
             id TEXT PRIMARY KEY,
@@ -33,7 +47,7 @@ def init_db():
         )
     ''')
 
-    # Add datasets to the datasets table (if they don't already exist)
+    # Seed Neo4j datasets
     for dataset in DATASETS:
         c.execute('''
             INSERT OR IGNORE INTO datasets (id) VALUES (?)
@@ -60,7 +74,7 @@ def load_graphs_from_db():
     c.execute("SELECT stats_json FROM graphs")
     rows = c.fetchall()
     conn.close()
-    return [json.loads(row[0])[0] for row in rows]  # JSON is stored as list of one dict
+    return [json.loads(row[0])[0] for row in rows]
 
 def graph_exists_in_db(graph_id: str):
     conn = sqlite3.connect(DB_PATH)
@@ -71,19 +85,15 @@ def graph_exists_in_db(graph_id: str):
     return exists
 
 def mark_dataset_as_fetched(dataset: str):
-    """Mark a dataset as fetched in the 'datasets' table."""
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('''
-        UPDATE datasets
-        SET fetched = TRUE
-        WHERE id = ?
+        INSERT OR REPLACE INTO datasets (id, fetched) VALUES (?, TRUE)
     ''', (dataset,))
     conn.commit()
     conn.close()
 
 def is_dataset_fetched(dataset: str):
-    """Check if a dataset is marked as fetched in the 'datasets' table."""
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('''
@@ -93,50 +103,79 @@ def is_dataset_fetched(dataset: str):
     conn.close()
     return result and result[0] == 1
 
-# -------------------- FETCH & CACHE --------------------
+# -------------------- FETCHERS --------------------
 def fetch_and_cache_graph(graph_id):
-    """Fetch a graph and immediately cache it in the DB."""
-    fetched_graph = Neo4jGraphFetcher.fetch_all_graphs(URI, [graph_id])  # Fetch only the specific graph
-    graph = fetched_graph[0]  # There should only be one graph fetched
-    
-    graph.extract_statistics()
-    graph.source = "neo4j"
-    graph.title = graph.title or "untitled"
-
-    if not graph_exists_in_db(graph.id):
+    try:
+        if is_dataset_fetched(graph_id):
+            return None
+        fetched_graph = Neo4jGraphFetcher.fetch_all_graphs(URI, [graph_id])
+        graph = fetched_graph[0]
+        graph.extract_statistics()
+        graph.source = "neo4j"
+        graph.title = graph.title or "untitled"
         save_graph_to_db(graph)
-    
-    return graph.get_statistics()
+        mark_dataset_as_fetched(graph.id)
+        return graph.get_statistics()
+    except Exception as e:
+        return {"error": f"Neo4j fetch error for {graph_id}: {str(e)}"}
+
+def fetch_supabase_graphs():
+    try:
+        fetcher = SupabaseGraphFetcher(SUPABASE_URL, SUPABASE_KEY)
+        graphs = fetcher.get_files_from_metadata()
+        graph_list = []
+        for i, G in enumerate(graphs):
+            graph = Graph()
+            graph.from_existing_graph(G)
+            graph.extract_statistics()
+            graph.source = "supabase"
+            graph.id = graph.title = G.graph.get("title", f"supabase:{i}")
+            graph.tags = G.graph.get("tags", [])
+
+            if not is_dataset_fetched(graph.id):
+                save_graph_to_db(graph)
+                mark_dataset_as_fetched(graph.id)
+
+            graph_list.append(graph.get_statistics())
+        return graph_list
+    except Exception as e:
+        return [{"error": f"Supabase fetch error: {str(e)}"}]
+
+# -------------------- BACKGROUND WORKER --------------------
+def background_worker():
+    while True:
+        # Check for jobs that need to be processed (fetch new graphs, etc.)
+        for graph_id in DATASETS:
+            if not is_dataset_fetched(graph_id):
+                fetch_and_cache_graph(graph_id)
+        time.sleep(60)  # Sleep for 60 seconds, then recheck for pending jobs
+
+# Start the background worker thread
+background_thread = threading.Thread(target=background_worker, daemon=True)
+background_thread.start()
 
 # -------------------- FLASK APP --------------------
 app = Flask(__name__)
-init_db()  # Ensure DB exists on startup
+init_db()
 
 @app.route('/graph-api', methods=['GET'])
 def get_graph_stats():
     try:
-        # Get the list of graphs from the DB (or empty if none are available)
         cached_graphs = load_graphs_from_db()
-
-        # If cached graphs exist, return them immediately
         if cached_graphs:
             return jsonify(cached_graphs)
 
-        # Otherwise, fetch and cache the graphs one by one
-        graph_list = []
-        for graph_id in DATASETS:
-            # Only fetch and cache the dataset if it's not already fetched
-            if not is_dataset_fetched(graph_id):
-                graph_stats = fetch_and_cache_graph(graph_id)
-                graph_list.append(graph_stats)
-                mark_dataset_as_fetched(graph_id)  # Mark this dataset as fetched
-            else:
-                # If the graph was already fetched, just load the stats
-                cached_graphs = load_graphs_from_db()
-                graph_list.extend(cached_graphs)
+        # Run Neo4j and Supabase fetches concurrently
+        with ThreadPoolExecutor() as executor:
+            neo4j_futures = [executor.submit(fetch_and_cache_graph, graph_id) for graph_id in DATASETS]
+            supabase_future = executor.submit(fetch_supabase_graphs)
 
-        return jsonify(graph_list)
-    
+            neo4j_results = [f.result() for f in neo4j_futures if f.result() is not None]
+            supabase_results = supabase_future.result()
+
+        all_graphs = [*neo4j_results, *supabase_results]
+        return jsonify(all_graphs)
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
