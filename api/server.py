@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor
 import time  # To simulate continuous job checking
+from flask_cors import CORS
 
 from graph import Graph  # Your custom class (Graph)
 from neo4jgraphs import Neo4jGraphFetcher  # Neo4j fetcher
@@ -156,6 +157,7 @@ background_thread.start()
 
 # -------------------- FLASK APP --------------------
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 init_db()
 
 @app.route('/graph-api', methods=['GET'])
