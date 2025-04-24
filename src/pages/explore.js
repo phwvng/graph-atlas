@@ -8,7 +8,7 @@ import { Nav, NavLogo } from '../components/Navbar/NavbarElements';
 import Upload from '../components/UploadForm';
 
 const ExplorePage = () => {
-  const { data } = useFetch('/graph-api');
+  const { data } = useFetch('https://graph-atlas.onrender.com/graph-api');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const navigate = useNavigate();
