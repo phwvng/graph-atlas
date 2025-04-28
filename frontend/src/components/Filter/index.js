@@ -1,3 +1,4 @@
+// Filter.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   FilterBox,
@@ -13,34 +14,31 @@ import {
   AmountLabel
 } from './FilterElements';
 
-const Filter = ({ checkCollapse, onClick, domains, onFilterChange }) => {
-  // Reusable function to group counts by a given key.
-  const groupCounts = (items, keyName) =>
-    Object.entries(
-      items.reduce((acc, item) => {
-        const key = item[keyName];
-        acc[key] = (acc[key] || 0) + 1;
-        return acc;
-      }, {})
-    ).map(([key, count]) => ({ [keyName]: key, count }));
-
-  // Generate grouped lists for domains and sources.
-  const domainList = groupCounts(domains, "title");
-  const sourceList = groupCounts(domains, "source");
-
-  // Local state for checkbox selections.
+const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFiltered }) => {
+  // Local state for checkboxes
   const [selectedDomains, setSelectedDomains] = useState({});
   const [selectedSources, setSelectedSources] = useState({});
 
-  // Function to update filtered datasets based on selected filters.
+  const handleDomainChange = (e) => {
+    const { name, checked } = e.target;
+    setSelectedDomains(prev => ({ ...prev, [name]: checked }));
+  };
+
+  const handleSourceChange = (e) => {
+    const { name, checked } = e.target;
+    setSelectedSources(prev => ({ ...prev, [name]: checked }));
+  };
+
   const updateFilters = useCallback(() => {
     const activeDomainFilters = Object.keys(selectedDomains).filter(key => selectedDomains[key]);
     const activeSourceFilters = Object.keys(selectedSources).filter(key => selectedSources[key]);
 
     let filtered = domains;
+
     if (activeDomainFilters.length > 0) {
       filtered = filtered.filter(item => activeDomainFilters.includes(item.title));
     }
+
     if (activeSourceFilters.length > 0) {
       filtered = filtered.filter(item => activeSourceFilters.includes(item.source));
     }
@@ -50,22 +48,23 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange }) => {
     }
   }, [selectedDomains, selectedSources, domains, onFilterChange]);
 
-  // Handle change for domain checkboxes.
-  const handleDomainChange = (e) => {
-    const { name, checked } = e.target;
-    setSelectedDomains(prev => ({ ...prev, [name]: checked }));
-  };
-
-  // Handle change for source checkboxes.
-  const handleSourceChange = (e) => {
-    const { name, checked } = e.target;
-    setSelectedSources(prev => ({ ...prev, [name]: checked }));
-  };
-
-  // Update filters whenever selections change.
+  // Update filters when selections change
   useEffect(() => {
     updateFilters();
   }, [updateFilters]);
+
+  // Group counts based on the currently visible graphs (currentFiltered)
+  const groupCounts = (items, keyName) => {
+    const counts = items.reduce((acc, item) => {
+      const key = item[keyName];
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+    return Object.entries(counts).map(([key, count]) => ({ [keyName]: key, count }));
+  };
+
+  const domainList = groupCounts(currentFiltered, "title");
+  const sourceList = groupCounts(currentFiltered, "source");
 
   return (
     <FilterBox>

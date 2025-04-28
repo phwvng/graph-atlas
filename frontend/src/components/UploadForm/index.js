@@ -52,7 +52,7 @@ const Upload = ({ open, onClose }) => { // Destructure `open` and `onClose` from
           </UploadDropArea>
           <UploadButton disabled={!file}>Upload</UploadButton>
         </UploadForm>
-        <UploadDescription>Supported formats: .graphml, .csv</UploadDescription>
+        <UploadDescription>Supported formats: .graphml, .csv, .edges</UploadDescription>
         {uploading && (
           <UploadProgressBar>
             <UploadProgressFill progress={progress} />
