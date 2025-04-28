@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useView } from '../../viewContext'; // Import ViewContext
+import { useView } from '../../viewContext';
 import {
   ExploreContainer,
   DomainBox,
@@ -14,13 +14,15 @@ import {
   SortBy,
   SortByOption,
   SortText,
-  SortWrapper
+  SortWrapper,
+  SpinnerWrapper,
+  SpinnerCircle,  // Import the spinner components here
 } from './ExploreElements';
 import DomainImage from '../DomainImage';
 import Datapreview from '../Datapreview';
 
 const Explore = ({ domainImages }) => {
-  const { view, setView } = useView(); // Use view context instead of state
+  const { view, setView } = useView();
   const [sortOption, setSortOption] = useState('name');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -75,23 +77,29 @@ const Explore = ({ domainImages }) => {
       <Divider />
 
       <DomainBox isGrid={view}>
-        {sortedDomainImages
-          .filter((domain) =>
-            domain.title.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-          .map((domain) => (
-            <React.Fragment key={domain.id}>
-              <DomainImage
-                domain={domain}
-                onClick={() => navigate(`/explore/domains/${domain.id}`)}
-              />
-              <Datapreview
-                dataset={domain}
-                open={openDomainId === domain.id}
-                onClose={() => navigate("/explore")}
-              />
-            </React.Fragment>
-          ))}
+        {domainImages.length === 0 ? ( // Check if no images are loaded
+          <SpinnerWrapper> {/* Show spinner if no data */}
+            <SpinnerCircle />
+          </SpinnerWrapper>
+        ) : (
+          sortedDomainImages
+            .filter((domain) =>
+              domain.title.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+            .map((domain) => (
+              <React.Fragment key={domain.id}>
+                <DomainImage
+                  domain={domain}
+                  onClick={() => navigate(`/explore/domains/${domain.id}`)}
+                />
+                <Datapreview
+                  dataset={domain}
+                  open={openDomainId === domain.id}
+                  onClose={() => navigate("/explore")}
+                />
+              </React.Fragment>
+            ))
+        )}
       </DomainBox>
     </ExploreContainer>
   );

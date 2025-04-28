@@ -5,12 +5,12 @@ import json
 import os
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor
-import time  # To simulate continuous job checking
+import time
 from flask_cors import CORS
 
-from graph import Graph  # Your custom class (Graph)
-from neo4jgraphs import Neo4jGraphFetcher  # Neo4j fetcher
-from supabasegraphs import SupabaseGraphFetcher  # Supabase fetcher
+from graph import Graph  # Your custom class
+from neo4jgraphs import Neo4jGraphFetcher
+from supabasegraphs import SupabaseGraphFetcher
 from scheduler import JobScheduler, GraphJob
 
 # -------------------- CONFIG --------------------
@@ -18,7 +18,7 @@ DB_PATH = "graphs.db"
 URI = "neo4j+ssc://demo.neo4jlabs.com"
 DATASETS = ["northwind", "movies", "gameofthrones", "stackoverflow", "recommendations", "fincen", "twitter", "neoflix", "wordnet"]
 
-# Load Supabase credentials from .env
+# Load Supabase credentials
 load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
@@ -30,7 +30,7 @@ def init_db():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
-    # Graph cache table
+    # Graph cache
     c.execute('''
         CREATE TABLE IF NOT EXISTS graphs (
             id TEXT PRIMARY KEY,
@@ -40,13 +40,16 @@ def init_db():
         )
     ''')
 
-    # Fetched datasets tracker (Neo4j + Supabase)
+    # Fetched datasets tracker
     c.execute('''
         CREATE TABLE IF NOT EXISTS datasets (
             id TEXT PRIMARY KEY,
             fetched BOOLEAN DEFAULT FALSE
         )
     ''')
+
+    # Index for fast title lookup
+    c.execute('CREATE INDEX IF NOT EXISTS idx_graphs_title ON graphs(title COLLATE NOCASE)')
 
     # Seed Neo4j datasets
     for dataset in DATASETS:
@@ -68,14 +71,6 @@ def save_graph_to_db(graph: Graph):
     ''', (graph.id, graph.title, graph.source, stats_json))
     conn.commit()
     conn.close()
-
-def load_graphs_from_db():
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT stats_json FROM graphs")
-    rows = c.fetchall()
-    conn.close()
-    return [json.loads(row[0])[0] for row in rows]
 
 def graph_exists_in_db(graph_id: str):
     conn = sqlite3.connect(DB_PATH)
@@ -104,6 +99,26 @@ def is_dataset_fetched(dataset: str):
     conn.close()
     return result and result[0] == 1
 
+def get_all_graph_summaries():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT id, title, source FROM graphs")
+    rows = c.fetchall()
+    conn.close()
+    summaries = [{"id": row[0], "title": row[1], "source": row[2]} for row in rows]
+    return summaries
+
+def get_graph_by_title_from_db(title):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT stats_json FROM graphs WHERE lower(title) = lower(?)", (title,))
+    row = c.fetchone()
+    conn.close()
+    if row:
+        return json.loads(row[0])[0]
+    else:
+        return None
+
 # -------------------- FETCHERS --------------------
 def fetch_and_cache_graph(graph_id):
     try:
@@ -124,7 +139,6 @@ def fetch_supabase_graphs():
     try:
         fetcher = SupabaseGraphFetcher(SUPABASE_URL, SUPABASE_KEY)
         graphs = fetcher.get_files_from_metadata()
-        graph_list = []
         for i, G in enumerate(graphs):
             graph = Graph()
             graph.from_existing_graph(G)
@@ -137,47 +151,41 @@ def fetch_supabase_graphs():
                 save_graph_to_db(graph)
                 mark_dataset_as_fetched(graph.id)
 
-            graph_list.append(graph.get_statistics())
-        return graph_list
     except Exception as e:
-        return [{"error": f"Supabase fetch error: {str(e)}"}]
+        print(f"Supabase fetch error: {str(e)}")
 
 # -------------------- BACKGROUND WORKER --------------------
 def background_worker():
     while True:
-        # Check for jobs that need to be processed (fetch new graphs, etc.)
         for graph_id in DATASETS:
             if not is_dataset_fetched(graph_id):
                 fetch_and_cache_graph(graph_id)
-        time.sleep(60)  # Sleep for 60 seconds, then recheck for pending jobs
+        time.sleep(60)
 
-# Start the background worker thread
 background_thread = threading.Thread(target=background_worker, daemon=True)
 background_thread.start()
 
 # -------------------- FLASK APP --------------------
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
 init_db()
 
-@app.route('/graph-api', methods=['GET'])
-def get_graph_stats():
+@app.route('/graphs', methods=['GET'])
+def list_graphs():
     try:
-        cached_graphs = load_graphs_from_db()
-        if cached_graphs:
-            return jsonify(cached_graphs)
+        graph_summaries = get_all_graph_summaries()
+        return jsonify(graph_summaries)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-        # Run Neo4j and Supabase fetches concurrently
-        with ThreadPoolExecutor() as executor:
-            neo4j_futures = [executor.submit(fetch_and_cache_graph, graph_id) for graph_id in DATASETS]
-            supabase_future = executor.submit(fetch_supabase_graphs)
-
-            neo4j_results = [f.result() for f in neo4j_futures if f.result() is not None]
-            supabase_results = supabase_future.result()
-
-        all_graphs = [*neo4j_results, *supabase_results]
-        return jsonify(all_graphs)
-
+@app.route('/graphs/<graph_title>', methods=['GET'])
+def get_graph_by_title(graph_title):
+    try:
+        graph = get_graph_by_title_from_db(graph_title)
+        if graph:
+            return jsonify(graph)
+        else:
+            return jsonify({"error": f"Graph with title '{graph_title}' not found."}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

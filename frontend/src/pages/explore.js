@@ -1,47 +1,64 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // Use useLocation for URL tracking
+import { useNavigate, useLocation } from 'react-router-dom';
 import Explore from '../components/Explore';
-import useFetch from '../hooks/useFetch';
 import Filter from '../components/Filter';
 import { Layout, Sidebar, MainContent, ContentWrapper, UploadButton } from '../components/Layout';
 import { Nav, NavLogo } from '../components/Navbar/NavbarElements';
 import Upload from '../components/UploadForm';
 
 const ExplorePage = () => {
-  const { data } = useFetch('https://graph-atlas.onrender.com/graph-api');
+  const [graphTitles, setGraphTitles] = useState([]);
+  const [fullGraphs, setFullGraphs] = useState([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [filteredData, setFilteredData] = useState([]);
   const navigate = useNavigate();
-  const location = useLocation(); // To track the current URL
+  const location = useLocation();
   const [open, setOpen] = useState(false);
 
-  // Open upload modal when navigate to '/explore/upload'
   useEffect(() => {
     if (location.pathname === '/explore/upload') {
-      setOpen(true); // Open upload form if we're on the upload route
+      setOpen(true);
     } else {
-      setOpen(false); // Close the upload form if we're not on the upload route
+      setOpen(false);
     }
   }, [location.pathname]);
 
   const uploadButtonClick = () => {
-    navigate('/explore/upload'); // This navigates and opens the Upload form
-  }
+    navigate('/explore/upload');
+  };
 
   const onClose = () => {
-    navigate('/explore'); // Navigates back to explore page
-  }
-
-  useEffect(() => {
-    if (data) {
-      setFilteredData(data);  // Initialize filtered data
-    }
-  }, [data]);
+    navigate('/explore');
+  };
 
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
 
-  // Memoize the filteredData to prevent unnecessary re-renders in Explore
-  const stableFilteredData = useMemo(() => filteredData, [filteredData]);
+  const stableFilteredData = useMemo(() => fullGraphs, [fullGraphs]);
+
+  // Main fetching logic
+  useEffect(() => {
+    async function fetchGraphs() {
+      try {
+        // Step 1: Fetch list of graph metadata (titles)
+        const res = await fetch('https://graph-atlas.onrender.com/graphs');
+        const titlesData = await res.json();
+        setGraphTitles(titlesData);
+
+        // Step 2: For each title, fetch the full statistics
+        const fetchFullStats = titlesData.map((graph) =>
+          fetch(`https://graph-atlas.onrender.com/graphs/${encodeURIComponent(graph.title)}`)
+            .then((res) => res.json())
+        );
+
+        // Step 3: Wait for all fetches to finish
+        const allGraphs = await Promise.all(fetchFullStats);
+        setFullGraphs(allGraphs);
+      } catch (error) {
+        console.error('Error fetching graphs:', error);
+      }
+    }
+
+    fetchGraphs();
+  }, []);
 
   return (
     <Layout>
@@ -55,16 +72,16 @@ const ExplorePage = () => {
           <Filter
             checkCollapse={isCollapsed}
             onClick={toggleCollapse}
-            domains={data || []}  // Pass original data for filtering
-            onFilterChange={setFilteredData}  // Update filtered data
+            domains={fullGraphs || []}
+            onFilterChange={setFullGraphs}
           />
         </Sidebar>
         <MainContent>
-          <Explore domainImages={stableFilteredData} /> {/* Pass stable data */}
+          <Explore domainImages={stableFilteredData} />
         </MainContent>
       </ContentWrapper>
 
-      {open && <Upload open={open} onClose={onClose} />} {/* Conditionally render Upload */}
+      {open && <Upload open={open} onClose={onClose} />}
     </Layout>
   );
 };
