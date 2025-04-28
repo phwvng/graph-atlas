@@ -1,36 +1,40 @@
+# scheduler.py
+
 import sqlite3
 from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor
+import threading
 
 class JobScheduler:
-    def __init__(self, max_workers=4):
+    def __init__(self):
         self.jobs = []
-        self.max_workers = max_workers
-        self.executor = ThreadPoolExecutor(max_workers=max_workers)
+        self.max_workers = 4  # Change based on system capabilities
         self.running_jobs = 0
+        self.lock = threading.Lock()
 
     def schedule(self, job):
-        print(f"Scheduling job {job.name}...")
-        self.jobs.append(job)
-        self.run_jobs()
+        with self.lock:
+            if self.running_jobs < self.max_workers:
+                self.jobs.append(job)
+                print(f"Scheduling job {job.name}...")
+                self.run_jobs()
+            else:
+                print(f"Cannot schedule job {job.name}. Max worker limit reached.")
 
     def run_jobs(self):
         while self.jobs and self.running_jobs < self.max_workers:
             job = self.jobs.pop(0)
+            threading.Thread(target=self.run_job, args=(job,)).start()
             self.running_jobs += 1
-            future = self.executor.submit(self._run_job, job)
-            future.add_done_callback(lambda f: self._job_done_callback(job))
 
-    def _run_job(self, job):
+    def run_job(self, job):
         try:
             job.run()
         except Exception as e:
             print(f"Error running job {job.name}: {e}")
-
-    def _job_done_callback(self, job):
-        self.running_jobs -= 1
-        print(f"Job {job.name} completed.")
-        self.run_jobs()  # Check if there are more jobs to run
+        finally:
+            with self.lock:
+                self.running_jobs -= 1
+                self.run_jobs()  # Try to start next job if available
 
 class Job:
     def __init__(self, graph_id, name, function, *args, **kwargs):
@@ -43,7 +47,7 @@ class Job:
         self.start_time = None
         self.end_time = None
         self.progress = 0
-        self.total_steps = 0
+        self.total_steps = 100
         self.current_step = 0
 
     def run(self):
@@ -58,7 +62,10 @@ class Job:
     def update_progress(self, current_step, total_steps):
         self.current_step = current_step
         self.total_steps = total_steps
-        self.progress = (self.current_step / self.total_steps) * 100
+        if total_steps > 0:
+            self.progress = (self.current_step / self.total_steps) * 100
+        else:
+            self.progress = 0
         self.update_db()
 
     def update_db(self):

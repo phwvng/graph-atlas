@@ -1,12 +1,15 @@
+# server.py
+
 import threading
 from flask import Flask, jsonify
 import sqlite3
 import json
 import os
 from dotenv import load_dotenv
+import time
 from flask_cors import CORS
 
-from graph import Graph  # Your custom class
+from graph import Graph
 from neo4jgraphs import Neo4jGraphFetcher
 from supabasegraphs import SupabaseGraphFetcher
 from scheduler import JobScheduler, GraphJob
@@ -21,7 +24,7 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-job_scheduler = JobScheduler(max_workers=4)
+job_scheduler = JobScheduler()
 
 # -------------------- INIT DB --------------------
 def init_db():
@@ -46,7 +49,7 @@ def init_db():
         )
     ''')
 
-    # Jobs table for tracking fetch tasks
+    # Jobs tracking
     c.execute('''
         CREATE TABLE IF NOT EXISTS jobs (
             id TEXT PRIMARY KEY,
@@ -70,7 +73,6 @@ def init_db():
     
     conn.commit()
     conn.close()
-
 
 # -------------------- DB UTILS --------------------
 def save_graph_to_db(graph: Graph):
@@ -104,9 +106,7 @@ def mark_dataset_as_fetched(dataset: str):
 def is_dataset_fetched(dataset: str):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute('''
-        SELECT fetched FROM datasets WHERE id = ?
-    ''', (dataset,))
+    c.execute('SELECT fetched FROM datasets WHERE id = ?', (dataset,))
     result = c.fetchone()
     conn.close()
     return result and result[0] == 1
@@ -117,8 +117,7 @@ def get_all_graph_summaries():
     c.execute("SELECT id, title, source FROM graphs")
     rows = c.fetchall()
     conn.close()
-    summaries = [{"id": row[0], "title": row[1], "source": row[2]} for row in rows]
-    return summaries
+    return [{"id": row[0], "title": row[1], "source": row[2]} for row in rows]
 
 def get_graph_by_title_from_db(title):
     conn = sqlite3.connect(DB_PATH)
@@ -126,17 +125,14 @@ def get_graph_by_title_from_db(title):
     c.execute("SELECT stats_json FROM graphs WHERE lower(title) = lower(?)", (title,))
     row = c.fetchone()
     conn.close()
-    if row:
-        return json.loads(row[0])[0]
-    else:
-        return None
+    return json.loads(row[0])[0] if row else None
 
 # -------------------- FETCHERS --------------------
 def fetch_and_cache_graph(graph_id):
+    if is_dataset_fetched(graph_id):
+        return
+
     try:
-        if is_dataset_fetched(graph_id):
-            print(f"Graph {graph_id} already fetched. Skipping.")
-            return None
         fetched_graph = Neo4jGraphFetcher.fetch_all_graphs(URI, [graph_id])
         graph = fetched_graph[0]
         graph.extract_statistics()
@@ -144,11 +140,10 @@ def fetch_and_cache_graph(graph_id):
         graph.title = graph.title or "untitled"
         save_graph_to_db(graph)
         mark_dataset_as_fetched(graph.id)
-        print(f"Fetched and cached graph {graph_id}")
         return graph.get_statistics()
     except Exception as e:
         print(f"Neo4j fetch error for {graph_id}: {str(e)}")
-        return {"error": f"Neo4j fetch error for {graph_id}: {str(e)}"}
+        return {"error": str(e)}
 
 def fetch_supabase_graphs():
     try:
@@ -169,25 +164,27 @@ def fetch_supabase_graphs():
     except Exception as e:
         print(f"Supabase fetch error: {str(e)}")
 
-# -------------------- JOB INITIALIZATION --------------------
-def initialize_jobs():
-    for graph_id in DATASETS:
-        if not is_dataset_fetched(graph_id):
-            job = GraphJob(graph_id, fetch_and_cache_graph, graph_id)
-            job_scheduler.schedule(job)
+# -------------------- BACKGROUND WORKER --------------------
+def background_worker():
+    while True:
+        for graph_id in DATASETS:
+            if not is_dataset_fetched(graph_id):
+                job = GraphJob(graph_id, fetch_and_cache_graph, graph_id)
+                job_scheduler.schedule(job)
+        time.sleep(60)
+
+background_thread = threading.Thread(target=background_worker, daemon=True)
+background_thread.start()
 
 # -------------------- FLASK APP --------------------
 app = Flask(__name__)
 CORS(app)
-
 init_db()
-initialize_jobs()
 
 @app.route('/graphs', methods=['GET'])
 def list_graphs():
     try:
-        graph_summaries = get_all_graph_summaries()
-        return jsonify(graph_summaries)
+        return jsonify(get_all_graph_summaries())
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -201,53 +198,6 @@ def get_graph_by_title(graph_title):
             return jsonify({"error": f"Graph with title '{graph_title}' not found."}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-@app.route('/jobs', methods=['GET'])
-def list_jobs():
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("SELECT id, status, start_time, end_time, progress FROM jobs")
-        rows = c.fetchall()
-        conn.close()
-
-        jobs = []
-        for row in rows:
-            jobs.append({
-                "id": row[0],
-                "status": row[1],
-                "start_time": row[2],
-                "end_time": row[3],
-                "progress": row[4]
-            })
-
-        return jsonify(jobs)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/jobs/<graph_id>', methods=['GET'])
-def get_job_status(graph_id):
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("SELECT id, status, start_time, end_time, progress FROM jobs WHERE id = ?", (graph_id,))
-        row = c.fetchone()
-        conn.close()
-
-        if row:
-            job = {
-                "id": row[0],
-                "status": row[1],
-                "start_time": row[2],
-                "end_time": row[3],
-                "progress": row[4]
-            }
-            return jsonify(job)
-        else:
-            return jsonify({"error": f"Job with id '{graph_id}' not found."}), 404
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
 
 # -------------------- MAIN --------------------
 if __name__ == '__main__':
