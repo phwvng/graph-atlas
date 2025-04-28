@@ -28,6 +28,7 @@ def init_db():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
+    # Graph cache
     c.execute('''
         CREATE TABLE IF NOT EXISTS graphs (
             id TEXT PRIMARY KEY,
@@ -37,6 +38,7 @@ def init_db():
         )
     ''')
 
+    # Fetched datasets tracker
     c.execute('''
         CREATE TABLE IF NOT EXISTS datasets (
             id TEXT PRIMARY KEY,
@@ -44,8 +46,23 @@ def init_db():
         )
     ''')
 
+    # Jobs table for tracking fetch tasks
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS jobs (
+            id TEXT PRIMARY KEY,
+            status TEXT,
+            start_time TEXT,
+            end_time TEXT,
+            progress REAL,
+            total_steps INTEGER,
+            current_step INTEGER
+        )
+    ''')
+
+    # Index for fast title lookup
     c.execute('CREATE INDEX IF NOT EXISTS idx_graphs_title ON graphs(title COLLATE NOCASE)')
 
+    # Seed Neo4j datasets
     for dataset in DATASETS:
         c.execute('''
             INSERT OR IGNORE INTO datasets (id) VALUES (?)
@@ -53,6 +70,7 @@ def init_db():
     
     conn.commit()
     conn.close()
+
 
 # -------------------- DB UTILS --------------------
 def save_graph_to_db(graph: Graph):
