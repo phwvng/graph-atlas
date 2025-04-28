@@ -4,8 +4,6 @@ import sqlite3
 import json
 import os
 from dotenv import load_dotenv
-from concurrent.futures import ThreadPoolExecutor
-import time
 from flask_cors import CORS
 
 from graph import Graph  # Your custom class
@@ -23,14 +21,13 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-job_scheduler = JobScheduler()
+job_scheduler = JobScheduler(max_workers=4)
 
 # -------------------- INIT DB --------------------
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
-    # Graph cache
     c.execute('''
         CREATE TABLE IF NOT EXISTS graphs (
             id TEXT PRIMARY KEY,
@@ -40,7 +37,6 @@ def init_db():
         )
     ''')
 
-    # Fetched datasets tracker
     c.execute('''
         CREATE TABLE IF NOT EXISTS datasets (
             id TEXT PRIMARY KEY,
@@ -48,10 +44,8 @@ def init_db():
         )
     ''')
 
-    # Index for fast title lookup
     c.execute('CREATE INDEX IF NOT EXISTS idx_graphs_title ON graphs(title COLLATE NOCASE)')
 
-    # Seed Neo4j datasets
     for dataset in DATASETS:
         c.execute('''
             INSERT OR IGNORE INTO datasets (id) VALUES (?)
@@ -123,6 +117,7 @@ def get_graph_by_title_from_db(title):
 def fetch_and_cache_graph(graph_id):
     try:
         if is_dataset_fetched(graph_id):
+            print(f"Graph {graph_id} already fetched. Skipping.")
             return None
         fetched_graph = Neo4jGraphFetcher.fetch_all_graphs(URI, [graph_id])
         graph = fetched_graph[0]
@@ -131,8 +126,10 @@ def fetch_and_cache_graph(graph_id):
         graph.title = graph.title or "untitled"
         save_graph_to_db(graph)
         mark_dataset_as_fetched(graph.id)
+        print(f"Fetched and cached graph {graph_id}")
         return graph.get_statistics()
     except Exception as e:
+        print(f"Neo4j fetch error for {graph_id}: {str(e)}")
         return {"error": f"Neo4j fetch error for {graph_id}: {str(e)}"}
 
 def fetch_supabase_graphs():
@@ -154,21 +151,19 @@ def fetch_supabase_graphs():
     except Exception as e:
         print(f"Supabase fetch error: {str(e)}")
 
-# -------------------- BACKGROUND WORKER --------------------
-def background_worker():
-    while True:
-        for graph_id in DATASETS:
-            if not is_dataset_fetched(graph_id):
-                fetch_and_cache_graph(graph_id)
-        time.sleep(60)
-
-background_thread = threading.Thread(target=background_worker, daemon=True)
-background_thread.start()
+# -------------------- JOB INITIALIZATION --------------------
+def initialize_jobs():
+    for graph_id in DATASETS:
+        if not is_dataset_fetched(graph_id):
+            job = GraphJob(graph_id, fetch_and_cache_graph, graph_id)
+            job_scheduler.schedule(job)
 
 # -------------------- FLASK APP --------------------
 app = Flask(__name__)
 CORS(app)
+
 init_db()
+initialize_jobs()
 
 @app.route('/graphs', methods=['GET'])
 def list_graphs():
@@ -188,6 +183,53 @@ def get_graph_by_title(graph_title):
             return jsonify({"error": f"Graph with title '{graph_title}' not found."}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/jobs', methods=['GET'])
+def list_jobs():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("SELECT id, status, start_time, end_time, progress FROM jobs")
+        rows = c.fetchall()
+        conn.close()
+
+        jobs = []
+        for row in rows:
+            jobs.append({
+                "id": row[0],
+                "status": row[1],
+                "start_time": row[2],
+                "end_time": row[3],
+                "progress": row[4]
+            })
+
+        return jsonify(jobs)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/jobs/<graph_id>', methods=['GET'])
+def get_job_status(graph_id):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("SELECT id, status, start_time, end_time, progress FROM jobs WHERE id = ?", (graph_id,))
+        row = c.fetchone()
+        conn.close()
+
+        if row:
+            job = {
+                "id": row[0],
+                "status": row[1],
+                "start_time": row[2],
+                "end_time": row[3],
+                "progress": row[4]
+            }
+            return jsonify(job)
+        else:
+            return jsonify({"error": f"Job with id '{graph_id}' not found."}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # -------------------- MAIN --------------------
 if __name__ == '__main__':

@@ -1,28 +1,36 @@
 import sqlite3
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 
 class JobScheduler:
-    def __init__(self):
+    def __init__(self, max_workers=4):
         self.jobs = []
-        self.max_workers = 4  # Change this based on your system's capabilities
+        self.max_workers = max_workers
+        self.executor = ThreadPoolExecutor(max_workers=max_workers)
         self.running_jobs = 0
 
     def schedule(self, job):
-        if self.running_jobs < self.max_workers:
-            self.jobs.append(job)
-            print(f"Job {job.name} added to the scheduler.")
-            self.run_jobs()
-        else:
-            print(f"Cannot add job {job.name}. Maximum worker limit reached.")
+        print(f"Scheduling job {job.name}...")
+        self.jobs.append(job)
+        self.run_jobs()
 
     def run_jobs(self):
-        while self.jobs:
+        while self.jobs and self.running_jobs < self.max_workers:
             job = self.jobs.pop(0)
+            self.running_jobs += 1
+            future = self.executor.submit(self._run_job, job)
+            future.add_done_callback(lambda f: self._job_done_callback(job))
+
+    def _run_job(self, job):
+        try:
             job.run()
-            self.running_jobs -= 1
-            print(f"Job {job.name} executed.")
-        else:
-            print("No jobs in the scheduler.")
+        except Exception as e:
+            print(f"Error running job {job.name}: {e}")
+
+    def _job_done_callback(self, job):
+        self.running_jobs -= 1
+        print(f"Job {job.name} completed.")
+        self.run_jobs()  # Check if there are more jobs to run
 
 class Job:
     def __init__(self, graph_id, name, function, *args, **kwargs):
@@ -41,7 +49,7 @@ class Job:
     def run(self):
         self.start_time = datetime.now()
         self.status = "running"
-        self.update_progress(0, 100)  # Initial progress percentage (customize as needed)
+        self.update_progress(0, 100)
         self.function(*self.args, **self.kwargs)
         self.end_time = datetime.now()
         self.status = "completed"
