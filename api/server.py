@@ -1,5 +1,3 @@
-# server.py
-
 import threading
 from flask import Flask, jsonify
 import sqlite3
@@ -7,6 +5,7 @@ import json
 import os
 from dotenv import load_dotenv
 import time
+import requests
 from flask_cors import CORS
 
 from graph import Graph
@@ -176,6 +175,19 @@ def background_worker():
 background_thread = threading.Thread(target=background_worker, daemon=True)
 background_thread.start()
 
+# -------------------- KEEP-ALIVE --------------------
+def keep_alive():
+    while True:
+        try:
+            requests.get('https://graph-atlas.onrender.com/keep_alive')
+            print("Pinged server to keep it alive.")
+        except Exception as e:
+            print(f"Error keeping server alive: {e}")
+        time.sleep(60)  # Adjust the sleep time as needed
+
+keep_alive_thread = threading.Thread(target=keep_alive, daemon=True)
+keep_alive_thread.start()
+
 # -------------------- FLASK APP --------------------
 app = Flask(__name__)
 CORS(app)
@@ -198,6 +210,10 @@ def get_graph_by_title(graph_title):
             return jsonify({"error": f"Graph with title '{graph_title}' not found."}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/keep_alive', methods=['GET'])
+def keep_alive():
+    return "pong", 200
 
 # -------------------- MAIN --------------------
 if __name__ == '__main__':
