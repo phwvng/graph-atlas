@@ -1,52 +1,109 @@
 import React from 'react';
-import { Overlay, PreviewButton, PreviewContainer, PreviewHeader, PreviewTitle, PreviewContent, PreviewImage, PreviewDescription, Metadata, MetadataItem, MetadataLabel, MetadataValue, DownloadButton } from './DatapreviewElements';
 import ReactDom from 'react-dom';
+import {
+  Overlay,
+  PreviewButton,
+  PreviewContainer,
+  PreviewHeader,
+  PreviewTitle,
+  PreviewContent,
+  PreviewDescription,
+  Metadata,
+  MetadataItem,
+  MetadataLabel,
+  MetadataValue,
+  DownloadButton,
+  GuideContainer,
+  GuideStep
+} from './DatapreviewElements';
 
-const Datapreview = ({ dataset, open, onClose  }) => {
-  if (!open) {
-    return null;
-  }
+import {
+  TagWrapper,
+  TagContainer,
+  DomainTag
+} from '../DomainImage/DomainElements';
+
+// Tag color generator
+const generateTagColor = (tag) => {
+  const hash = Array.from(tag).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const hue = hash % 360;
+  return `hsl(${hue}, 70%, 60%)`;
+};
+
+const Datapreview = ({ dataset, open, onClose }) => {
+  if (!open) return null;
+
   return ReactDom.createPortal(
     <>
-    <Overlay></Overlay>
-    <PreviewContainer>
-      <PreviewButton onClick={onClose}>Back</PreviewButton>
-      <PreviewHeader>
-        <PreviewTitle>{dataset.title}</PreviewTitle>
-      </PreviewHeader>
-      <PreviewContent>
-        <PreviewImage src={dataset.url} alt={dataset.title} />
-        <PreviewDescription>{dataset.description}</PreviewDescription>
-      </PreviewContent>
-    <Metadata>
-      <MetadataItem>
-        <MetadataLabel>Nodes</MetadataLabel>
-        <MetadataValue>{dataset.n_nodes}</MetadataValue>
-      </MetadataItem>
-      <MetadataItem>
-        <MetadataLabel>Edges</MetadataLabel>
-        <MetadataValue>{dataset.n_edges}</MetadataValue>
-      </MetadataItem>
-      <MetadataItem>
-        <MetadataLabel>Edge types</MetadataLabel>
-        <MetadataValue>{dataset.edge_types}</MetadataValue>
-      </MetadataItem>
-      <MetadataItem>
-        <MetadataLabel>Node types</MetadataLabel>
-        <MetadataValue>{dataset.node_types}</MetadataValue>
-      </MetadataItem>
-      <MetadataItem>
-        <MetadataLabel>Assortativity</MetadataLabel>
-        <MetadataValue>{dataset.assortativity}</MetadataValue>
-      </MetadataItem>
-      <MetadataItem>
-        <MetadataLabel>Density</MetadataLabel>
-        <MetadataValue>{dataset.density}</MetadataValue>
-      </MetadataItem>
-    </Metadata>
-    <DownloadButton>Download Dataset</DownloadButton>
+      <Overlay />
+      <PreviewContainer>
+        <PreviewButton onClick={onClose}>Back</PreviewButton>
 
-    </PreviewContainer>
+        <PreviewHeader>
+          <PreviewTitle>{dataset.title}</PreviewTitle>
+        </PreviewHeader>
+
+        <PreviewContent>
+          <PreviewDescription>{dataset.description}</PreviewDescription>
+
+          {/* Tag Section */}
+          {dataset.tags && dataset.tags.length > 0 && (
+            <TagWrapper>
+              <TagContainer>
+                {dataset.tags.map((tag, idx) => (
+                  <DomainTag key={idx} color={generateTagColor(tag)}>
+                    #{tag}
+                  </DomainTag>
+                ))}
+              </TagContainer>
+            </TagWrapper>
+          )}
+        </PreviewContent>
+
+        {/* Metadata Section */}
+        <Metadata>
+          <MetadataItem>
+            <MetadataLabel>Nodes</MetadataLabel>
+            <MetadataValue>{dataset.n_nodes}</MetadataValue>
+          </MetadataItem>
+          <MetadataItem>
+            <MetadataLabel>Edges</MetadataLabel>
+            <MetadataValue>{dataset.n_edges}</MetadataValue>
+          </MetadataItem>
+          <MetadataItem>
+            <MetadataLabel>Node types</MetadataLabel>
+            <MetadataValue>{dataset.node_types}</MetadataValue>
+          </MetadataItem>
+          <MetadataItem>
+            <MetadataLabel>Edge types</MetadataLabel>
+            <MetadataValue>{dataset.edge_types}</MetadataValue>
+          </MetadataItem>
+          <MetadataItem>
+            <MetadataLabel>Assortativity</MetadataLabel>
+            <MetadataValue>{dataset.assortativity}</MetadataValue>
+          </MetadataItem>
+          <MetadataItem>
+            <MetadataLabel>Density</MetadataLabel>
+            <MetadataValue>{dataset.density}</MetadataValue>
+          </MetadataItem>
+        </Metadata>
+        {dataset.guide && dataset.guide.length > 0 && (
+        <GuideContainer>
+        {dataset.guide && dataset.guide.length > 0 ? (
+          dataset.guide.map((step, index) => (
+            <GuideStep key={index}>
+              <strong>Step {index + 1}:</strong> {step}
+            </GuideStep>
+          ))
+        ) : (
+          <GuideStep>No guide available.</GuideStep>
+        )}
+      </GuideContainer>
+      
+      )}
+
+        <DownloadButton>Download Dataset</DownloadButton>
+      </PreviewContainer>
     </>,
     document.getElementById('portal')
   );

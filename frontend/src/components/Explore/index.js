@@ -89,7 +89,7 @@ const Explore = ({ domainImages }) => {
             .map((domain) => (
               <React.Fragment key={domain.id}>
                 <DomainImage
-                  domain={domain}
+                  domains={domain}
                   onClick={() => navigate(`/explore/domains/${domain.id}`)}
                 />
                 <Datapreview
