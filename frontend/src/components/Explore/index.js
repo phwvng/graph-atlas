@@ -16,7 +16,8 @@ import {
   SortText,
   SortWrapper,
   SpinnerWrapper,
-  SpinnerCircle,  // Import the spinner components here
+  SpinnerCircle, 
+  NotLoadedText // Import the spinner components here
 } from './ExploreElements';
 import DomainImage from '../DomainImage';
 import Datapreview from '../Datapreview';
@@ -78,9 +79,12 @@ const Explore = ({ domainImages }) => {
 
       <DomainBox isGrid={view}>
         {domainImages.length === 0 ? ( // Check if no images are loaded
+         <>
           <SpinnerWrapper> {/* Show spinner if no data */}
             <SpinnerCircle />
           </SpinnerWrapper>
+          <NotLoadedText>Still loading? Click <a href="https://graph-atlas.onrender.com/graphs" target="__blank__">here</a> to ping the API</NotLoadedText>
+          </>
         ) : (
           sortedDomainImages
             .filter((domain) =>

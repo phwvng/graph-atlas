@@ -168,3 +168,11 @@ export const SortByOption = styled.option`
   color: #fff;
   cursor: pointer;
 `;
+
+export const NotLoadedText = styled.p`
+  color: #fff;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+
+`;

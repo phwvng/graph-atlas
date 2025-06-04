@@ -175,19 +175,6 @@ def background_worker():
 background_thread = threading.Thread(target=background_worker, daemon=True)
 background_thread.start()
 
-# -------------------- KEEP-ALIVE --------------------
-def keep_alive():
-    while True:
-        try:
-            requests.get('https://graph-atlas.onrender.com/keep_alive')
-            print("Pinged server to keep it alive.")
-        except Exception as e:
-            print(f"Error keeping server alive: {e}")
-        time.sleep(60)  # Adjust the sleep time as needed
-
-keep_alive_thread = threading.Thread(target=keep_alive, daemon=True)
-keep_alive_thread.start()
-
 # -------------------- FLASK APP --------------------
 app = Flask(__name__)
 CORS(app)
