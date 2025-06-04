@@ -1,186 +1,231 @@
 import styled from 'styled-components';
 
-// Fullscreen dark overlay
+// Overlay with subtle blur for depth
 export const Overlay = styled.div`
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   z-index: 1000;
 `;
 
-// Modal container
+// Modal container with toned-down shadow (no inset glow)
 export const PreviewContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
-  background: #2c2c2c;
-  padding: 40px;
-  width: 60%;
-  max-width: 800px;
+  background: linear-gradient(145deg, #323232, #272727);
+  padding: 40px 45px;
+  width: 65%;
+  max-width: 850px;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  animation: fadeIn 0.3s ease-out;
+  border-radius: 14px;
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.45);
+  animation: fadeInScale 0.4s ease forwards;
 
-  @keyframes fadeIn {
-    from {
+  @keyframes fadeInScale {
+    0% {
       opacity: 0;
-      transform: scale(0.95) translate(-50%, -50%);
+      transform: translate(-50%, -50%) scale(0.95);
     }
-    to {
+    100% {
       opacity: 1;
-      transform: scale(1) translate(-50%, -50%);
+      transform: translate(-50%, -50%) scale(1);
     }
   }
 `;
 
-// Back button
+// Header container (title + back button) using flexbox
+export const PreviewHeader = styled.div`
+  width: 100%;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;       /* vertical center */
+  justify-content: space-between; /* title left, button right */
+`;
+
+// Title styling
+export const PreviewTitle = styled.h1`
+  color: #FAFAFA;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: capitalize;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+  margin: 0;
+`;
+
+// Back button styling (normal flow, no absolute positioning)
 export const PreviewButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #01BF71;
+  background: #03C988;
   color: #fff;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
+  align-self: flex-end; /* aligns button to the top */
   cursor: pointer;
-  font-size: 18px;
-  &:hover {
-    background: #028c52;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(3, 201, 136, 0.6);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+  white-space: nowrap;
+
+  &:hover, &:focus {
+    background: #029e6a;
+    box-shadow: 0 5px 12px rgba(2, 158, 106, 0.8);
+    outline: none;
   }
 `;
 
-// Title and header
-export const PreviewHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-export const PreviewTitle = styled.h1`
-  color: #fff;
-  font-size: 32px;
-  text-align: center;
-  margin-bottom: 10px;
-  text-transform: capitalize;
-  font-weight: 600;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
-`;
-
-// Preview image and description
+// Content and description
 export const PreviewContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   width: 100%;
-`;
-
-export const PreviewImage = styled.img`
-  width: 100%;
-  max-width: 200px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 `;
 
 export const PreviewDescription = styled.p`
-  color: #a6a6a6;
-  font-size: 18px;
+  color: #ccc;
+  font-size: 20px;
+  max-width: 680px;
+  line-height: 1.5;
   text-align: center;
-  max-width: 600px;
-  margin-bottom: 20px;
-  line-height: 1.6;
+  margin-top: 6px;
+  font-weight: 400;
 `;
 
-// Metadata section
 export const Metadata = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: 50%;
-  background: #2c2c2c;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 10px;
+  gap: 14px;
+  width: 48%;
+  background: #1f1f1f;
+  padding: 24px 26px;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03),
+              0 4px 10px rgba(0, 0, 0, 0.4);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 `;
 
 export const MetadataItem = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-`;
+  align-items: baseline;
+  gap: 16px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+  padding-bottom: 10px;
 
-export const MetadataLabel = styled.p`
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-export const MetadataValue = styled.p`
-  color: #a6a6a6;
-  font-size: 16px;
-`;
-
-// CTA button
-export const DownloadButton = styled.button`
-  background: #01BF71;
-  color: #fff;
-  font-size: 18px;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 30px;
-  width: 100%;
-  text-align: center;
-  transition: background 0.3s ease-in-out;
-
-  &:hover {
-    background: #028c52;
+  &:last-child {
+    border-bottom: none;
   }
 `;
+
+export const MetadataLabel = styled.span`
+  color: #efefef;
+  font-size: 15px;
+  font-weight: 600;
+  flex-shrink: 0;
+  min-width: 120px;
+  text-transform: capitalize;
+`;
+
+export const MetadataValue = styled.span`
+  color: #a0d8cb;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: right;
+  word-break: break-word;
+  flex-grow: 1;
+`;
+
+// Guide container with matching style
 export const GuideContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 50%;
-  max-height: 300px; /* same as Metadata height or adjustable */
+  width: 48%;
+  max-height: 320px;
   overflow-y: auto;
-  background: #2c2c2c;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 10px;
+  background: #222;
+  padding: 24px 26px;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(3, 201, 136, 0.2);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
   scrollbar-width: thin;
-  scrollbar-color: #01BF71 transparent;
+  scrollbar-color: #03c988 transparent;
 
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
   }
-
   &::-webkit-scrollbar-thumb {
-    background-color: #01BF71;
-    border-radius: 3px;
+    background-color: #03c988;
+    border-radius: 5px;
   }
 `;
 
 export const GuideStep = styled.div`
-  color: #a6a6a6;
-  font-size: 16px;
-  margin-bottom: 10px;
-  line-height: 1.5;
+  color: #a0cfc1;
+  font-size: 17px;
+  margin-bottom: 14px;
+  line-height: 1.55;
+  font-weight: 500;
+
+  strong {
+    color: #03c988;
+  }
+`;
+
+// Wrapper to place metadata & guide side-by-side nicely
+export const InfoRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 28px;
+  margin-top: 24px;
+`;
+
+// Download button styling with smooth corners and subtle shadows
+export const DownloadButton = styled.button`
+  background: #03c988;
+  color: #fff;
+  font-size: 20px;
+  padding: 14px 26px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  margin-top: 38px;
+  width: 100%;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(3, 201, 136, 0.35);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover, &:focus {
+    background: #029e6a;
+    box-shadow: 0 7px 18px rgba(2, 158, 106, 0.65);
+    outline: none;
+  }
+
+  &:disabled {
+    background: #444;
+    color: #888;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.75;
+    pointer-events: none;
+  }
+`;
+
+// Download link wrapper with no underline & full width
+export const DownloadLink = styled.a`
+  display: block;
+  width: 100%;
+  text-decoration: none;
 `;

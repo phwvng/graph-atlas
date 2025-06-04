@@ -14,7 +14,9 @@ import {
   MetadataValue,
   DownloadButton,
   GuideContainer,
-  GuideStep
+  GuideStep,
+  InfoRow,
+  DownloadLink
 } from './DatapreviewElements';
 
 import {
@@ -60,49 +62,56 @@ const Datapreview = ({ dataset, open, onClose }) => {
           )}
         </PreviewContent>
 
-        {/* Metadata Section */}
-        <Metadata>
-          <MetadataItem>
-            <MetadataLabel>Nodes</MetadataLabel>
-            <MetadataValue>{dataset.n_nodes}</MetadataValue>
-          </MetadataItem>
-          <MetadataItem>
-            <MetadataLabel>Edges</MetadataLabel>
-            <MetadataValue>{dataset.n_edges}</MetadataValue>
-          </MetadataItem>
-          <MetadataItem>
-            <MetadataLabel>Node types</MetadataLabel>
-            <MetadataValue>{dataset.node_types}</MetadataValue>
-          </MetadataItem>
-          <MetadataItem>
-            <MetadataLabel>Edge types</MetadataLabel>
-            <MetadataValue>{dataset.edge_types}</MetadataValue>
-          </MetadataItem>
-          <MetadataItem>
-            <MetadataLabel>Assortativity</MetadataLabel>
-            <MetadataValue>{dataset.assortativity}</MetadataValue>
-          </MetadataItem>
-          <MetadataItem>
-            <MetadataLabel>Density</MetadataLabel>
-            <MetadataValue>{dataset.density}</MetadataValue>
-          </MetadataItem>
-        </Metadata>
-        {dataset.guide && dataset.guide.length > 0 && (
-        <GuideContainer>
-        {dataset.guide && dataset.guide.length > 0 ? (
-          dataset.guide.map((step, index) => (
-            <GuideStep key={index}>
-              <strong>Step {index + 1}:</strong> {step}
-            </GuideStep>
-          ))
-        ) : (
-          <GuideStep>No guide available.</GuideStep>
-        )}
-      </GuideContainer>
-      
-      )}
+        {/* Metadata & Guide side-by-side */}
+        <InfoRow>
+          <Metadata>
+            <MetadataItem>
+              <MetadataLabel>Nodes</MetadataLabel>
+              <MetadataValue>{dataset.n_nodes}</MetadataValue>
+            </MetadataItem>
+            <MetadataItem>
+              <MetadataLabel>Edges</MetadataLabel>
+              <MetadataValue>{dataset.n_edges}</MetadataValue>
+            </MetadataItem>
+            <MetadataItem>
+              <MetadataLabel>Node types</MetadataLabel>
+              <MetadataValue>{dataset.node_types}</MetadataValue>
+            </MetadataItem>
+            <MetadataItem>
+              <MetadataLabel>Edge types</MetadataLabel>
+              <MetadataValue>{dataset.edge_types}</MetadataValue>
+            </MetadataItem>
+            <MetadataItem>
+              <MetadataLabel>Assortativity</MetadataLabel>
+              <MetadataValue>{dataset.assortativity}</MetadataValue>
+            </MetadataItem>
+            <MetadataItem>
+              <MetadataLabel>Density</MetadataLabel>
+              <MetadataValue>{dataset.density}</MetadataValue>
+            </MetadataItem>
+          </Metadata>
 
-        <DownloadButton>Download Dataset</DownloadButton>
+          <GuideContainer>
+            {dataset.guide && dataset.guide.length > 0 ? (
+              dataset.guide.map((step, index) => (
+                <GuideStep key={index}>
+                  <strong>Step {index + 1}:</strong> {step}
+                </GuideStep>
+              ))
+            ) : (
+              <GuideStep>No guide available.</GuideStep>
+            )}
+          </GuideContainer>
+        </InfoRow>
+
+        {/* Download button with file_url check */}
+        {dataset.file_url ? (
+          <DownloadLink href={dataset.file_url} download target="_blank" rel="noopener noreferrer">
+            <DownloadButton>Download Dataset</DownloadButton>
+          </DownloadLink>
+        ) : (
+          <DownloadButton disabled>No Download Available</DownloadButton>
+        )}
       </PreviewContainer>
     </>,
     document.getElementById('portal')

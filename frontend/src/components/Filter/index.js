@@ -1,4 +1,4 @@
-// Filter.jsx
+
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   FilterBox,
@@ -36,7 +36,7 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
     let filtered = domains;
 
     if (activeDomainFilters.length > 0) {
-      filtered = filtered.filter(item => activeDomainFilters.includes(item.title));
+      filtered = filtered.filter(item => activeDomainFilters.includes(item.domain));
     }
 
     if (activeSourceFilters.length > 0) {
@@ -81,14 +81,14 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
       <FilterOptions>
         {domainList.map((domain, index) => (
           <FilterItemContainer key={index} isCollapsed={checkCollapse}>
-            <Label htmlFor={domain.title} isCollapsed={checkCollapse}>
-              {domain.title}
+            <Label htmlFor={domain.domain} isCollapsed={checkCollapse}>
+              {domain.domain}
             </Label>
             <FilterItem
               type="checkbox"
-              id={domain.title}
-              name={domain.title}
-              checked={!!selectedDomains[domain.title]}
+              id={domain.domain}
+              name={domain.domain}
+              checked={!!selectedDomains[domain.domain]}
               onChange={handleDomainChange}
             />
             <AmountLabel>({domain.count})</AmountLabel>
