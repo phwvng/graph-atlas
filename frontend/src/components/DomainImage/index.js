@@ -4,12 +4,12 @@ import {
   DomainHeader,
   DomainContentWrapper,
   DomainContent,
-  DatasetStatsContainer,
-  DatasetStatCard,
+  StatsGrid,
+  StatCard,
+  IconWrapper,
+  LabelValueWrapper,
   StatLabel,
   StatValue,
-  ComplexityContainer,
-  ComplexityCard,
   SourceContainer,
   SourceCard,
   TagWrapper,
@@ -17,11 +17,13 @@ import {
   DomainTag
 } from './DomainElements';
 
+import { FiCpu, FiShuffle, FiLayers, FiGitBranch, FiBookOpen } from 'react-icons/fi';
 
+import { useView } from '../../viewContext';
 
 const DomainImage = ({ domains, onClick }) => {
+  const { view } = useView();
 
-  const domain = domains;
   const generateTagColor = (tag) => {
     const hash = Array.from(tag).reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const hue = hash % 360;
@@ -29,48 +31,72 @@ const DomainImage = ({ domains, onClick }) => {
   };
 
   return (
-    <DomainContainer id={domain.id} onClick={onClick}>
-      <DomainHeader>{domain.title}</DomainHeader>
+    <DomainContainer id={domains.id} onClick={onClick} view={view}>
+      <DomainHeader>{domains.title}</DomainHeader>
 
       <DomainContentWrapper>
         <DomainContent>
-          {/* Dataset Stats Section */}
-          <DatasetStatsContainer>
-            <DatasetStatCard>
-              <StatLabel>Nodes</StatLabel>
-              <StatValue>{domain.n_nodes}</StatValue>
-            </DatasetStatCard>
-            <DatasetStatCard>
-              <StatLabel>Edges</StatLabel>
-              <StatValue>{domain.n_edges}</StatValue>
-            </DatasetStatCard>
-          </DatasetStatsContainer>
+          <StatsGrid>
+            <StatCard view={view}>
+              {!view && <StatLabel>Nodes</StatLabel>}
+              <LabelValueWrapper>
+                <IconWrapper color="#4db6ac" view={view}>
+                  <FiCpu />
+                </IconWrapper>
+                <StatValue color="#4db6ac" view={view}>
+                  {domains.n_nodes}
+                </StatValue>
+              </LabelValueWrapper>
+            </StatCard>
 
-          {/* Complexity Stats Section */}
-          <ComplexityContainer>
-            <ComplexityCard>
-              <StatLabel>Node Types</StatLabel>
-              <StatValue>{domain.node_types}</StatValue>
-            </ComplexityCard>
-            <ComplexityCard>
-              <StatLabel>Edge Types</StatLabel>
-              <StatValue>{domain.edge_types}</StatValue>
-            </ComplexityCard>
-          </ComplexityContainer>
+            <StatCard view={view}>
+              {!view && <StatLabel>Edges</StatLabel>}
+              <LabelValueWrapper>
+                <IconWrapper color="#81c784" view={view}>
+                  <FiGitBranch />
+                </IconWrapper>
+                <StatValue color="#81c784" view={view}>
+                  {domains.n_edges}
+                </StatValue>
+              </LabelValueWrapper>
+            </StatCard>
 
-          {/* Source Section */}
+            <StatCard view={view}>
+              {!view && <StatLabel>Node Types</StatLabel>}
+              <LabelValueWrapper>
+                <IconWrapper color="#9575cd" view={view}>
+                  <FiLayers />
+                </IconWrapper>
+                <StatValue color="#9575cd" view={view}>
+                  {domains.node_types}
+                </StatValue>
+              </LabelValueWrapper>
+            </StatCard>
+
+            <StatCard view={view}>
+              {!view && <StatLabel>Edge Types</StatLabel>}
+              <LabelValueWrapper>
+                <IconWrapper color="#7986cb" view={view}>
+                  <FiShuffle />
+                </IconWrapper>
+                <StatValue color="#7986cb" view={view}>
+                  {domains.edge_types}
+                </StatValue>
+              </LabelValueWrapper>
+            </StatCard>
+          </StatsGrid>
+
           <SourceContainer>
             <SourceCard>
-              <StatLabel>Source</StatLabel>
-              <StatValue>{domain.source}</StatValue>
+              <FiBookOpen style={{ marginRight: 8 }} />
+              <span>{domains.source}</span>
             </SourceCard>
           </SourceContainer>
 
-          {/* Tags Section */}
           <TagWrapper>
             <TagContainer>
-              {domain.tags && domain.tags.length > 0 ? (
-                domain.tags.map((tag) => (
+              {domains.tags && domains.tags.length > 0 ? (
+                domains.tags.map((tag) => (
                   <DomainTag key={tag} color={generateTagColor(tag)}>
                     #{tag}
                   </DomainTag>

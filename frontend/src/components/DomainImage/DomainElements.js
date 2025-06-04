@@ -1,61 +1,46 @@
 import styled from 'styled-components';
-import { useView } from '../../viewContext';
-
-// Reusable Card Component
-const Card = styled.div`
-  background-color: #3e3e3e;
-  padding: 6px 10px;
-  border-radius: 6px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: ${() => (useView().view ? 'column' : 'row')};
-`;
 
 export const DomainContainer = styled.div`
   display: flex;
-  flex-direction: ${() => (useView().view ? 'column' : 'row')};
+  flex-direction: ${({ view }) => (view ? 'column' : 'row')};
   justify-content: flex-start;
   align-items: stretch;
   background: #2c2c2c;
-  border-radius: 8px;
-  height: ${() => (useView().view ? '250px' : 'auto')};
-  width: ${() => (useView().view ? '200px' : '100%')};
-  padding: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease-in-out;
+  border-radius: 10px;
+  height: ${({ view }) => (view ? '250px' : 'auto')};
+  width: ${({ view }) => (view ? '210px' : '100%')};
+  padding: 12px 14px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   color: #fff;
-  overflow: hidden;
-  margin: 6px;
+  margin: 8px;
   box-sizing: border-box;
-  position: relative;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.55);
+  }
 
   @media (max-width: 768px) {
     width: 100%;
     height: auto;
-    padding: 8px;
-  }
-
-  &:hover {
-    transform: scale(1.02);
-    cursor: pointer;
+    padding: 10px 12px;
   }
 `;
 
 export const DomainHeader = styled.h1`
-  font-size: 0.85rem;
-  margin-bottom: 8px;
-  color: #fff;
-  font-weight: bold;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #fafafa;
   text-transform: capitalize;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
+  line-height: 1.2;
 `;
 
 export const DomainContentWrapper = styled.div`
@@ -66,7 +51,6 @@ export const DomainContentWrapper = styled.div`
   width: 100%;
   height: auto;
   box-sizing: border-box;
-  position: relative;
 `;
 
 export const DomainContent = styled.div`
@@ -74,107 +58,113 @@ export const DomainContent = styled.div`
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  margin-top: 6px;
 `;
 
-export const DatasetStatsContainer = styled.div`
+export const StatsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+`;
+
+export const StatCard = styled.div`
+  background-color: #3e3e3e;
+  padding: ${({ view }) => (view ? '4px 6px' : '6px 8px')};
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 4px;
-`;
-
-export const DatasetStatCard = styled(Card)`
-  width: 48%;
-  min-width: 80px;
-  margin-bottom: 6px;
-  display: flex;
-  justify-content: ${() => (useView().view ? 'center' : 'space-between')};
-  padding: ${() => (useView().view ? '6px 10px' : '6px 14px')};
-`;
-
-export const StatLabel = styled.p`
-  font-size: 0.7rem;
-  color: #dcdcdc;
-  text-align: ${() => (useView().view ? 'center' : 'left')};
-`;
-
-export const StatValue = styled.p`
-  font-size: 0.8rem;
-  font-weight: bold;
+  flex-direction: column;
+  align-items: center;
   color: #fff;
-  text-align: ${() => (useView().view ? 'center' : 'right')};
+  transition: padding 0.2s ease;
+
+  ${({ view }) =>
+    view &&
+    `
+    max-width: 90px;
+  `}
 `;
 
-export const ComplexityContainer = styled.div`
+export const IconWrapper = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 4px;
+  align-items: center;
+  font-size: ${({ view }) => (view ? '1.1rem' : '1.4rem')};
+  color: ${({ color }) => color || '#fff'};
+  min-width: 24px;
+  margin-bottom: ${({ view }) => (view ? '4px' : '6px')};
+  transition: font-size 0.2s ease, margin-bottom 0.2s ease;
 `;
 
-export const ComplexityCard = styled(Card)`
-  width: 48%;
-  min-width: 80px;
-  display: flex;
-  justify-content: ${() => (useView().view ? 'center' : 'space-between')};
-  padding: ${() => (useView().view ? '6px 10px' : '6px 14px')};
-`;
-
-export const SourceContainer = styled.div`
-  margin-top: 4px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-`;
-
-export const SourceCard = styled(Card)`
-  width: 100%;
-  min-height: ${() => (useView().view ? '40px' : '30px')};
-  display: flex;
-  justify-content: ${() => (useView().view ? 'center' : 'space-between')};
-  padding: ${() => (useView().view ? '6px 10px' : '6px 14px')};
-`;
-
-export const TagWrapper = styled.div`
-  min-height: 22px;
+export const LabelValueWrapper = styled.div`
+  flex-grow: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+export const StatLabel = styled.span`
+  font-size: 0.75rem;
+  color: #bdbdbd;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 4px;
+`;
+
+export const StatValue = styled.span`
+  font-size: ${({ view }) => (view ? '0.85rem' : 'rem')};
+  font-weight: 700;
+  color: ${({ color }) => color || '#fff'};
+  transition: font-size 0.2s ease;
+`;
+
+export const SourceContainer = styled.div`
   margin-top: 8px;
   width: 100%;
-  position: relative;
+`;
+
+export const SourceCard = styled.div`
+  background-color: #3e3e3e;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+`;
+
+export const TagWrapper = styled.div`
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 `;
 
 export const TagContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
   justify-content: center;
-  width: 100%;
 `;
 
 export const DomainTag = styled.div`
   background-color: ${({ color }) => color};
   color: white;
-  padding: 3px 5px;
-  border-radius: 4px;
-  font-weight: bold;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-size: 0.7rem;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  height: auto;
-  width: auto;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  max-width: 130px;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  user-select: none;
+  transition: opacity 0.25s ease;
 
   &:hover {
-    opacity: 0.8;
+    opacity: 0.85;
   }
 `;
+
