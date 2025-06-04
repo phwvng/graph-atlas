@@ -155,6 +155,7 @@ def fetch_supabase_graphs():
             graph.source = "supabase"
             graph.id = graph.title = G.graph.get("title", f"supabase:{i}")
             graph.tags = G.graph.get("tags", [])
+            graph.file_url = G.graph.get("file_url", "")
 
             if not is_dataset_fetched(graph.id):
                 save_graph_to_db(graph)
@@ -166,11 +167,21 @@ def fetch_supabase_graphs():
 # -------------------- BACKGROUND WORKER --------------------
 def background_worker():
     while True:
-        for graph_id in DATASETS:
-            if not is_dataset_fetched(graph_id):
-                job = GraphJob(graph_id, fetch_and_cache_graph, graph_id)
-                job_scheduler.schedule(job)
+        try:
+            # Fetch Supabase graphs first
+            fetch_supabase_graphs()
+
+            # Then process Neo4j datasets
+            for graph_id in DATASETS:
+                if not is_dataset_fetched(graph_id):
+                    job = GraphJob(graph_id, fetch_and_cache_graph, graph_id)
+                    job_scheduler.schedule(job)
+
+        except Exception as e:
+            print(f"Error in background worker: {str(e)}")
+
         time.sleep(60)
+
 
 background_thread = threading.Thread(target=background_worker, daemon=True)
 background_thread.start()
@@ -198,9 +209,6 @@ def get_graph_by_title(graph_title):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/keep_alive', methods=['GET'])
-def keep_alive():
-    return "pong", 200
 
 # -------------------- MAIN --------------------
 if __name__ == '__main__':
