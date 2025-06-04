@@ -94,7 +94,7 @@ const Explore = ({ domainImages }) => {
               <React.Fragment key={domain.id}>
                 <DomainImage
                   domains={domain}
-                  onClick={() => navigate(`/explore/domains/${domain.id}`)}
+                  onClick={() => navigate(`/explore/${domain.domain}/${domain.id}`)}
                 />
                 <Datapreview
                   dataset={domain}

@@ -1,23 +1,28 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   FilterBox,
   FilterH1,
   CollapseButton,
   ExpandButton,
+  FilterTitleWrapper,
   FilterTitle,
   FilterOptions,
   FilterItemContainer,
   FilterItem,
   Label,
   Divider,
-  AmountLabel
+  AmountLabel,
+  DomainIcon,
+  SourceIcon,
+  ShowMoreButton,
+  TagIcon
 } from './FilterElements';
 
 const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFiltered }) => {
-  // Local state for checkboxes
   const [selectedDomains, setSelectedDomains] = useState({});
   const [selectedSources, setSelectedSources] = useState({});
+  const [selectedTags, setSelectedTags] = useState({});
+  const [tagsExpanded, setTagsExpanded] = useState(false);
 
   const handleDomainChange = (e) => {
     const { name, checked } = e.target;
@@ -29,9 +34,15 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
     setSelectedSources(prev => ({ ...prev, [name]: checked }));
   };
 
+  const handleTagChange = (e) => {
+    const { name, checked } = e.target;
+    setSelectedTags(prev => ({ ...prev, [name]: checked }));
+  };
+
   const updateFilters = useCallback(() => {
     const activeDomainFilters = Object.keys(selectedDomains).filter(key => selectedDomains[key]);
     const activeSourceFilters = Object.keys(selectedSources).filter(key => selectedSources[key]);
+    const activeTagFilters = Object.keys(selectedTags).filter(key => selectedTags[key]);
 
     let filtered = domains;
 
@@ -43,21 +54,33 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
       filtered = filtered.filter(item => activeSourceFilters.includes(item.source));
     }
 
+    if (activeTagFilters.length > 0) {
+      // Since tags is an array, check if item.tags includes any active tag filter
+      filtered = filtered.filter(item =>
+        item.tags.some(tag => activeTagFilters.includes(tag))
+      );
+    }
+
     if (onFilterChange) {
       onFilterChange(filtered);
     }
-  }, [selectedDomains, selectedSources, domains, onFilterChange]);
+  }, [selectedDomains, selectedSources, selectedTags, domains, onFilterChange]);
 
-  // Update filters when selections change
   useEffect(() => {
     updateFilters();
   }, [updateFilters]);
 
-  // Group counts based on the currently visible graphs (currentFiltered)
   const groupCounts = (items, keyName) => {
     const counts = items.reduce((acc, item) => {
-      const key = item[keyName];
-      acc[key] = (acc[key] || 0) + 1;
+      if (keyName === 'tags') {
+        // For tags, flatten all arrays
+        item.tags.forEach(tag => {
+          acc[tag] = (acc[tag] || 0) + 1;
+        });
+      } else {
+        const key = item[keyName];
+        acc[key] = (acc[key] || 0) + 1;
+      }
       return acc;
     }, {});
     return Object.entries(counts).map(([key, count]) => ({ [keyName]: key, count }));
@@ -65,6 +88,10 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
 
   const domainList = groupCounts(currentFiltered, "domain");
   const sourceList = groupCounts(currentFiltered, "source");
+  const tagList = groupCounts(currentFiltered, "tags");
+
+  const displayedTags = tagsExpanded ? tagList : tagList.slice(0, 4);
+  const toggleTags = () => setTagsExpanded(prev => !prev);
 
   return (
     <FilterBox>
@@ -77,7 +104,10 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
       <FilterH1>Filters</FilterH1>
       <Divider />
 
-      <FilterTitle>Domain</FilterTitle>
+      <FilterTitleWrapper>
+        <DomainIcon size={18} color="#01bf71" />
+        <FilterTitle>Domain</FilterTitle>
+      </FilterTitleWrapper>
       <FilterOptions>
         {domainList.map((domain, index) => (
           <FilterItemContainer key={index} isCollapsed={checkCollapse}>
@@ -98,7 +128,10 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
 
       <Divider />
 
-      <FilterTitle>Source</FilterTitle>
+      <FilterTitleWrapper>
+        <SourceIcon size={18} color="#01bf71" />
+        <FilterTitle>Source</FilterTitle>
+      </FilterTitleWrapper>
       <FilterOptions>
         {sourceList.map((sourceItem, index) => (
           <FilterItemContainer key={index} isCollapsed={checkCollapse}>
@@ -115,6 +148,36 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
             <AmountLabel>({sourceItem.count})</AmountLabel>
           </FilterItemContainer>
         ))}
+      </FilterOptions>
+
+      <Divider />
+
+      <FilterTitleWrapper>
+        <TagIcon size={18} color="#01bf71" />
+        <FilterTitle>Tags</FilterTitle>
+      </FilterTitleWrapper>
+      <FilterOptions>
+        {displayedTags.map((tag, index) => (
+          <FilterItemContainer key={index} isCollapsed={checkCollapse}>
+            <Label htmlFor={tag.tags} isCollapsed={checkCollapse}>
+              {tag.tags}
+            </Label>
+            <FilterItem
+              type="checkbox"
+              id={tag.tags}
+              name={tag.tags}
+              checked={!!selectedTags[tag.tags]}
+              onChange={handleTagChange}
+            />
+            <AmountLabel>({tag.count})</AmountLabel>
+          </FilterItemContainer>
+        ))}
+
+        {tagList.length > 4 && (
+          <ShowMoreButton onClick={toggleTags}>
+            {tagsExpanded ? 'Show Less ▲' : 'Show More ▼'}
+          </ShowMoreButton>
+        )}
       </FilterOptions>
     </FilterBox>
   );
