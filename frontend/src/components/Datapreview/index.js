@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDom from 'react-dom';
+import ReactDOM from 'react-dom';
 import {
   Overlay,
   PreviewButton,
@@ -16,14 +16,24 @@ import {
   GuideContainer,
   GuideStep,
   InfoRow,
-  DownloadLink
-} from './DatapreviewElements';
-
-import {
+  DownloadLink,
   TagWrapper,
   TagContainer,
   DomainTag
-} from '../DomainImage/DomainElements';
+} from './DatapreviewElements';
+
+
+import {
+  FiCpu,
+  FiGitBranch,
+  FiLayers,
+  FiShuffle,
+  FiBarChart2,
+  FiActivity
+} from 'react-icons/fi';
+
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
 
 // Tag color generator
 const generateTagColor = (tag) => {
@@ -35,14 +45,13 @@ const generateTagColor = (tag) => {
 const Datapreview = ({ dataset, open, onClose }) => {
   if (!open) return null;
 
-  return ReactDom.createPortal(
+  return ReactDOM.createPortal(
     <>
       <Overlay />
       <PreviewContainer>
-        <PreviewButton onClick={onClose}>Back</PreviewButton>
-
         <PreviewHeader>
           <PreviewTitle>{dataset.title}</PreviewTitle>
+          <PreviewButton onClick={onClose}>Back</PreviewButton>
         </PreviewHeader>
 
         <PreviewContent>
@@ -66,27 +75,57 @@ const Datapreview = ({ dataset, open, onClose }) => {
         <InfoRow>
           <Metadata>
             <MetadataItem>
-              <MetadataLabel>Nodes</MetadataLabel>
+              <MetadataLabel
+                data-tooltip-id="tooltip"
+                data-tooltip-content="Total number of nodes in the graph"
+              >
+                <FiCpu /> Nodes
+              </MetadataLabel>
               <MetadataValue>{dataset.n_nodes}</MetadataValue>
             </MetadataItem>
             <MetadataItem>
-              <MetadataLabel>Edges</MetadataLabel>
+              <MetadataLabel
+                data-tooltip-id="tooltip"
+                data-tooltip-content="Total number of edges connecting nodes"
+              >
+                <FiGitBranch /> Edges
+              </MetadataLabel>
               <MetadataValue>{dataset.n_edges}</MetadataValue>
             </MetadataItem>
             <MetadataItem>
-              <MetadataLabel>Node types</MetadataLabel>
+              <MetadataLabel
+                data-tooltip-id="tooltip"
+                data-tooltip-content="Distinct types or classes of nodes"
+              >
+                <FiLayers /> Node types
+              </MetadataLabel>
               <MetadataValue>{dataset.node_types}</MetadataValue>
             </MetadataItem>
             <MetadataItem>
-              <MetadataLabel>Edge types</MetadataLabel>
+              <MetadataLabel
+                data-tooltip-id="tooltip"
+                data-tooltip-content="Different kinds of relationships between nodes"
+              >
+                <FiShuffle /> Edge types
+              </MetadataLabel>
               <MetadataValue>{dataset.edge_types}</MetadataValue>
             </MetadataItem>
             <MetadataItem>
-              <MetadataLabel>Assortativity</MetadataLabel>
+              <MetadataLabel
+                data-tooltip-id="tooltip"
+                data-tooltip-content="Tendency for nodes to connect to similar nodes"
+              >
+                <FiBarChart2 /> Assortativity
+              </MetadataLabel>
               <MetadataValue>{dataset.assortativity}</MetadataValue>
             </MetadataItem>
             <MetadataItem>
-              <MetadataLabel>Density</MetadataLabel>
+              <MetadataLabel
+                data-tooltip-id="tooltip"
+                data-tooltip-content="Proportion of possible edges that exist"
+              >
+                <FiActivity /> Density
+              </MetadataLabel>
               <MetadataValue>{dataset.density}</MetadataValue>
             </MetadataItem>
           </Metadata>
@@ -106,13 +145,25 @@ const Datapreview = ({ dataset, open, onClose }) => {
 
         {/* Download button with file_url check */}
         {dataset.file_url ? (
-          <DownloadLink href={dataset.file_url} download target="_blank" rel="noopener noreferrer">
+          <DownloadLink
+            href={dataset.file_url}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <DownloadButton>Download Dataset</DownloadButton>
           </DownloadLink>
         ) : (
           <DownloadButton disabled>No Download Available</DownloadButton>
         )}
       </PreviewContainer>
+
+      {/* Tooltip */}
+      <Tooltip
+        id="tooltip"
+        place="top"
+        style={{ fontSize: '13px', zIndex: 2000 }}
+      />
     </>,
     document.getElementById('portal')
   );

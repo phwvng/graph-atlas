@@ -45,8 +45,8 @@ export const PreviewHeader = styled.div`
   width: 100%;
   margin-bottom: 28px;
   display: flex;
-  align-items: center;       /* vertical center */
-  justify-content: space-between; /* title left, button right */
+  align-items: center;       
+  justify-content: space-between;
 `;
 
 // Title styling
@@ -60,14 +60,13 @@ export const PreviewTitle = styled.h1`
   margin: 0;
 `;
 
-// Back button styling (normal flow, no absolute positioning)
+// Back button styling
 export const PreviewButton = styled.button`
   background: #03C988;
   color: #fff;
   padding: 12px 24px;
   border: none;
   border-radius: 12px;
-  align-self: flex-end; /* aligns button to the top */
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
@@ -87,7 +86,7 @@ export const PreviewContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
   width: 100%;
 `;
 
@@ -97,30 +96,65 @@ export const PreviewDescription = styled.p`
   max-width: 680px;
   line-height: 1.5;
   text-align: center;
-  margin-top: 6px;
+  margin-top: 8px; /* Slightly increased for better spacing */
   font-weight: 400;
 `;
 
+export const TagWrapper = styled.div`
+  margin-top: -10px;
+  margin-bottom: -12px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
+
+export const TagContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px; /* Increased gap for better spacing */
+  max-width: 680px;
+  justify-content: center;
+`;
+
+export const DomainTag = styled.span`
+  background-color: ${({ color }) => color};
+  color: #fff;
+  font-size: 16px;           /* smaller than before */
+  font-weight: 600;
+  padding: 8px 16px;        /* slightly smaller padding */
+  border-radius: 24px;       /* still nicely rounded */
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  user-select: none;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${({ color }) => color};
+    cursor: default;
+  }
+`;
+
+
+// Metadata styles with subtle shadow and improved layout
 export const Metadata = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  align-items: flex-start;
   width: 48%;
-  background: #1f1f1f;
+  background: #222;
   padding: 24px 26px;
-  border-radius: 14px;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03),
-              0 4px 10px rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(3, 201, 136, 0.2);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 `;
 
 export const MetadataItem = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
-  padding-bottom: 10px;
+  width: 100%;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   &:last-child {
     border-bottom: none;
@@ -128,21 +162,31 @@ export const MetadataItem = styled.div`
 `;
 
 export const MetadataLabel = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 8px;
   color: #efefef;
-  font-size: 15px;
+  font-size: 14px; /* bumped for consistency */
   font-weight: 600;
   flex-shrink: 0;
-  min-width: 120px;
+  min-width: 140px;
   text-transform: capitalize;
+
+  svg {
+    color: #03c988;
+    font-size: 16px;
+  }
 `;
 
-export const MetadataValue = styled.span`
-  color: #a0d8cb;
-  font-size: 15px;
+export const MetadataValue = styled.p`
+  color: #9dbeb9;
+  font-size: 15.5px; /* bumped for consistency */
   font-weight: 500;
+  max-width: 65%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   text-align: right;
-  word-break: break-word;
-  flex-grow: 1;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 `;
 
 // Guide container with matching style
@@ -173,7 +217,7 @@ export const GuideContainer = styled.div`
 
 export const GuideStep = styled.div`
   color: #a0cfc1;
-  font-size: 17px;
+  font-size: 18px; /* bumped for consistency */
   margin-bottom: 14px;
   line-height: 1.55;
   font-weight: 500;
