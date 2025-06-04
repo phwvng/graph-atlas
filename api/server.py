@@ -148,43 +148,47 @@ def fetch_supabase_graphs():
     try:
         fetcher = SupabaseGraphFetcher(SUPABASE_URL, SUPABASE_KEY)
         graphs = fetcher.get_files_from_metadata()
+        
         for i, G in enumerate(graphs):
             graph = Graph()
             graph.from_existing_graph(G)
-            graph.extract_statistics()
-            graph.source = "supabase"
+            
+            # Populate fields from Supabase metadata
+            graph.source = G.graph.get("source", "supabase")
             graph.id = graph.title = G.graph.get("title", f"supabase:{i}")
             graph.tags = G.graph.get("tags", [])
+            graph.domain = G.graph.get("domain", "")
             graph.file_url = G.graph.get("file_url", "")
+            
+            try:
+                graph.extract_statistics()
+            except Exception as stat_error:
+                print(f"⚠️ Failed to extract statistics for {graph.id}: {stat_error}")
+                continue  # Skip this graph and move on
 
             if not is_dataset_fetched(graph.id):
-                save_graph_to_db(graph)
-                mark_dataset_as_fetched(graph.id)
+                try:
+                    print(f"📦 Saving Supabase graph to DB: {graph.id}")
+                    save_graph_to_db(graph)
+                    mark_dataset_as_fetched(graph.id)
+                except Exception as db_error:
+                    print(f"❌ Error saving {graph.id} to DB: {db_error}")
 
     except Exception as e:
-        print(f"Supabase fetch error: {str(e)}")
+        print(f"❌ Supabase fetch error: {str(e)}")
 
 # -------------------- BACKGROUND WORKER --------------------
 def background_worker():
     while True:
-        try:
-            # Fetch Supabase graphs first
-            fetch_supabase_graphs()
-
-            # Then process Neo4j datasets
-            for graph_id in DATASETS:
-                if not is_dataset_fetched(graph_id):
-                    job = GraphJob(graph_id, fetch_and_cache_graph, graph_id)
-                    job_scheduler.schedule(job)
-
-        except Exception as e:
-            print(f"Error in background worker: {str(e)}")
-
+        for graph_id in DATASETS:
+            if not is_dataset_fetched(graph_id):
+                job = GraphJob(graph_id, fetch_and_cache_graph, graph_id)
+                job_scheduler.schedule(job)
         time.sleep(60)
-
 
 background_thread = threading.Thread(target=background_worker, daemon=True)
 background_thread.start()
+
 
 # -------------------- FLASK APP --------------------
 app = Flask(__name__)

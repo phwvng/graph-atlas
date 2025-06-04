@@ -63,7 +63,7 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
     return Object.entries(counts).map(([key, count]) => ({ [keyName]: key, count }));
   };
 
-  const domainList = groupCounts(currentFiltered, "title");
+  const domainList = groupCounts(currentFiltered, "domain");
   const sourceList = groupCounts(currentFiltered, "source");
 
   return (

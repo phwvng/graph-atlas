@@ -68,7 +68,8 @@ class Neo4jGraphFetcher:
             graph.from_existing_graph(G)
             graph.title = dataset
             graph.id = dataset
-
+            graph.domain = "neo4j guides"
+            graph.tags = ["neo4j", "guide", dataset]
             graph_objects.append(graph)
             fetcher.close()
 

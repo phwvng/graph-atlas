@@ -53,6 +53,10 @@ class SupabaseGraphFetcher:
                 G.graph['title'] = file['title']  # Correctly assign the title
                 G.graph['tags'] = file['tags']  # Assign tags to the graph
                 G.graph['id'] = file['file_name']  # Assign the ID to the graph
+                G.graph['source'] = file['source']  # Assign the source to the graph
+                G.graph['domain'] = file['domain']  # Assign the domain to the graph
+                G.graph['file_url'] = file_url  # Assign the file URL to the graph
+
                 # Add the graph to the list
                 graph_objects.append(G)
 
