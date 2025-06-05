@@ -15,14 +15,31 @@ import {
   DomainIcon,
   SourceIcon,
   ShowMoreButton,
-  TagIcon
+  TagIcon,
+  NodesIcon,
+  RangeInputContainer,
+  EdgesIcon
 } from './FilterElements';
+import { Slider, Typography } from '@mui/material';
 
 const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFiltered }) => {
   const [selectedDomains, setSelectedDomains] = useState({});
   const [selectedSources, setSelectedSources] = useState({});
   const [selectedTags, setSelectedTags] = useState({});
   const [tagsExpanded, setTagsExpanded] = useState(false);
+  const [nNodeRange, setNNodeRange] = useState([0, 1000]);
+  const [nEdgeRange, setNEdgeRange] = useState([0, 1000]);
+
+  useEffect(() => {
+    const nodeCounts = domains.map(d => d.n_nodes);
+    const edgeCounts = domains.map(d => d.n_edges);
+    const minNodes = Math.min(...nodeCounts);
+    const maxNodes = Math.max(...nodeCounts);
+    const minEdges = Math.min(...edgeCounts);
+    const maxEdges = Math.max(...edgeCounts);
+    setNNodeRange([minNodes, maxNodes]);
+    setNEdgeRange([minEdges, maxEdges]);
+  }, [domains]);
 
   const handleDomainChange = (e) => {
     const { name, checked } = e.target;
@@ -55,16 +72,23 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
     }
 
     if (activeTagFilters.length > 0) {
-      // Since tags is an array, check if item.tags includes any active tag filter
       filtered = filtered.filter(item =>
         item.tags.some(tag => activeTagFilters.includes(tag))
       );
     }
 
+    filtered = filtered.filter(item =>
+      item.n_nodes >= nNodeRange[0] && item.n_nodes <= nNodeRange[1]
+    );
+
+    filtered = filtered.filter(item =>
+      item.n_edges >= nEdgeRange[0] && item.n_edges <= nEdgeRange[1]
+    );
+
     if (onFilterChange) {
       onFilterChange(filtered);
     }
-  }, [selectedDomains, selectedSources, selectedTags, domains, onFilterChange]);
+  }, [selectedDomains, selectedSources, selectedTags, domains, nNodeRange, nEdgeRange, onFilterChange]);
 
   useEffect(() => {
     updateFilters();
@@ -73,7 +97,6 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
   const groupCounts = (items, keyName) => {
     const counts = items.reduce((acc, item) => {
       if (keyName === 'tags') {
-        // For tags, flatten all arrays
         item.tags.forEach(tag => {
           acc[tag] = (acc[tag] || 0) + 1;
         });
@@ -104,6 +127,51 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
       <FilterH1>Filters</FilterH1>
       <Divider />
 
+      {/* Nodes */}
+      <FilterTitleWrapper>
+        <NodesIcon size={18} color="#01bf71" />
+        <FilterTitle>Node Count</FilterTitle>
+      </FilterTitleWrapper>
+      <FilterOptions>
+        <RangeInputContainer>
+          <Typography style={{ color: '#aaa', textAlign: 'center' }}>
+            {nNodeRange[0]} – {nNodeRange[1]}
+          </Typography>
+          <Slider
+            value={nNodeRange}
+            min={Math.min(...domains.map(d => d.n_nodes))}
+            max={Math.max(...domains.map(d => d.n_nodes))}
+            onChange={(e, newValue) => setNNodeRange(newValue)}
+            valueLabelDisplay="auto"
+            disableSwap
+          />
+        </RangeInputContainer>
+      </FilterOptions>
+
+      {/* Edges */}
+      <FilterTitleWrapper>
+        <EdgesIcon size={18} color="#01bf71" />
+        <FilterTitle>Edge Count</FilterTitle>
+      </FilterTitleWrapper>
+      <FilterOptions>
+        <RangeInputContainer>
+          <Typography style={{ color: '#aaa', textAlign: 'center' }}>
+            {nEdgeRange[0]} – {nEdgeRange[1]}
+          </Typography>
+          <Slider
+            value={nEdgeRange}
+            min={Math.min(...domains.map(d => d.n_edges))}
+            max={Math.max(...domains.map(d => d.n_edges))}
+            onChange={(e, newValue) => setNEdgeRange(newValue)}
+            valueLabelDisplay="auto"
+            disableSwap
+          />
+        </RangeInputContainer>
+      </FilterOptions>
+
+      <Divider />
+
+      {/* Domain */}
       <FilterTitleWrapper>
         <DomainIcon size={18} color="#01bf71" />
         <FilterTitle>Domain</FilterTitle>
@@ -128,6 +196,7 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
 
       <Divider />
 
+      {/* Source */}
       <FilterTitleWrapper>
         <SourceIcon size={18} color="#01bf71" />
         <FilterTitle>Source</FilterTitle>
@@ -152,6 +221,7 @@ const Filter = ({ checkCollapse, onClick, domains, onFilterChange, currentFilter
 
       <Divider />
 
+      {/* Tags */}
       <FilterTitleWrapper>
         <TagIcon size={18} color="#01bf71" />
         <FilterTitle>Tags</FilterTitle>

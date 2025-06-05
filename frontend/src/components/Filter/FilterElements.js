@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
-import { FiGlobe, FiBookOpen, FiTag } from "react-icons/fi"; // NEW
+import { FiGlobe, FiBookOpen, FiTag, FiFilter, FiCpu, FiGitBranch } from "react-icons/fi"; // NEW
 
 export const FilterBox = styled.div`
   display: flex;
@@ -157,7 +157,40 @@ export const ShowMoreButton = styled.div`
   }
 `;
 
+export const RangeInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+`;
+
+export const RangeSlider = styled.input`
+  width: 100%;
+  cursor: pointer;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: #444;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  z-index: 2;
+
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+export const RangeValue = styled.div`
+  font-size: 0.9rem;
+  color: #aaa;
+  text-align: center;
+`;
+
 // Export the icons for use in JSX
 export const DomainIcon = FiGlobe;
 export const SourceIcon = FiBookOpen;
 export const TagIcon = FiTag;
+export const FilterIcon = FiFilter
+export const NodesIcon = FiCpu
+export const EdgesIcon = FiGitBranch

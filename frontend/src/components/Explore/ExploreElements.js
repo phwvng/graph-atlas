@@ -77,21 +77,6 @@ export const SearchBar = styled.input`
   margin-right: 10px;
 `;
 
-export const SearchButton = styled.button`
-  padding: 16px 24px;
-  border: none;
-  outline: none;
-  border-radius: 50px;
-  background: #01bf71;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  text-decoration: none;
-  &:hover {
-    background: #fff;
-    color: #010606;
-  }
-`;
 
 export const Divider = styled.div`
   width: 100%;

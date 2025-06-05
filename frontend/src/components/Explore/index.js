@@ -6,7 +6,6 @@ import {
   DomainBox,
   FormContainer,
   SearchBar,
-  SearchButton,
   Divider,
   ChangeViewContainer,
   GridView,
