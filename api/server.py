@@ -18,7 +18,19 @@ DB_PATH = "graphs.db"
 URI = "neo4j+ssc://demo.neo4jlabs.com"
 DATASETS = ["northwind", "movies", "gameofthrones", "stackoverflow", "recommendations", "fincen", "twitter", "neoflix", "wordnet"]
 
-
+guides = {
+    "movies": [
+        "1. Create a Neo4j database",
+        "2. Import the Movies dataset using the provided CSV files.",
+        "3. Use the Cypher query language to explore relationships between actors, movies, and genres.",
+        "4. Visualize the graph using Neo4j Browser or Bloom.",
+        "5. Analyze the data to find connections between actors and movies, such as co-acting relationships or genre associations."
+    ],
+    # Add other guides here, e.g.
+    "northwind": [
+        "Step 1 for northwind",
+        "Step 2 for northwind"
+    ],}
 # Load Supabase credentials
 load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -138,6 +150,7 @@ def fetch_and_cache_graph(graph_id):
         graph.extract_statistics()
         graph.source = "neo4j"
         graph.title = graph.title or "untitled"
+        graph.guide = guides.get(graph_id, "")
         save_graph_to_db(graph)
         mark_dataset_as_fetched(graph.id)
         return graph.get_statistics()
