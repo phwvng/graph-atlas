@@ -18,6 +18,7 @@ DB_PATH = "graphs.db"
 URI = "neo4j+ssc://demo.neo4jlabs.com"
 DATASETS = ["northwind", "movies", "gameofthrones", "stackoverflow", "recommendations", "fincen", "twitter", "neoflix", "wordnet"]
 
+
 # Load Supabase credentials
 load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -180,6 +181,8 @@ def fetch_supabase_graphs():
 # -------------------- BACKGROUND WORKER --------------------
 def background_worker():
     while True:
+        # Fetch Supabase graphs
+        fetch_supabase_graphs()
         for graph_id in DATASETS:
             if not is_dataset_fetched(graph_id):
                 job = GraphJob(graph_id, fetch_and_cache_graph, graph_id)
