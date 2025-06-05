@@ -67,7 +67,7 @@ const Explore = ({ domainImages }) => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <SearchButton>Search</SearchButton>
+   
       </FormContainer>
 
       <ChangeViewContainer>
@@ -83,7 +83,7 @@ const Explore = ({ domainImages }) => {
           <SpinnerWrapper> {/* Show spinner if no data */}
             <SpinnerCircle />
           </SpinnerWrapper>
-          <NotLoadedText>Still loading? Click <a href="https://graph-atlas.onrender.com/graphs" target="__blank__">here</a> to ping the API</NotLoadedText>
+          <NotLoadedText>Still loading? Click <a href="https://graph-atlas.onrender.com/graphs" target="__blank__">here</a> to send an API request</NotLoadedText>
           </>
         ) : (
           sortedDomainImages
