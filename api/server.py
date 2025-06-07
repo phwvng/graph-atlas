@@ -193,12 +193,14 @@ def fetch_supabase_graphs():
 
 # -------------------- BACKGROUND WORKER --------------------
 def background_worker():
+    # Fetch Supabase graphs in the background
+    fetch_supabase_graphs()
     while True:
         for graph_id in DATASETS:
             if not is_dataset_fetched(graph_id):
                 job = GraphJob(graph_id, fetch_and_cache_graph, graph_id)
                 job_scheduler.schedule(job)
-        time.sleep(60)
+        time.sleep(180)
 
 background_thread = threading.Thread(target=background_worker, daemon=True)
 background_thread.start()

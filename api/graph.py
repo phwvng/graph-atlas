@@ -17,6 +17,7 @@ class Graph(nx.Graph):
     tags: List[str] = field(default_factory=list)  # Tags for the graph
     domain: str = field(default="")  # Domain of the graph
     file_url: str = field(default="")  # URL of the file associated with the graph
+    guide: List[str] = field(default_factory=list)  # Guide for the graph
     # Overview
     graph_type: int = field(init=False)
     is_directed_int: int = field(init=False)
