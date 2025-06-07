@@ -13,15 +13,12 @@ import {
   MetadataLabel,
   MetadataValue,
   DownloadButton,
-  GuideContainer,
-  GuideStep,
-  InfoRow,
   DownloadLink,
+  InfoRow,
   TagWrapper,
   TagContainer,
   DomainTag
 } from './DatapreviewElements';
-
 
 import {
   FiCpu,
@@ -34,6 +31,8 @@ import {
 
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
+
+import Guide from '../Guide'; // Adjust path based on your folder structure
 
 // Tag color generator
 const generateTagColor = (tag) => {
@@ -83,6 +82,7 @@ const Datapreview = ({ dataset, open, onClose }) => {
               </MetadataLabel>
               <MetadataValue>{dataset.n_nodes}</MetadataValue>
             </MetadataItem>
+
             <MetadataItem>
               <MetadataLabel
                 data-tooltip-id="tooltip"
@@ -92,6 +92,7 @@ const Datapreview = ({ dataset, open, onClose }) => {
               </MetadataLabel>
               <MetadataValue>{dataset.n_edges}</MetadataValue>
             </MetadataItem>
+
             <MetadataItem>
               <MetadataLabel
                 data-tooltip-id="tooltip"
@@ -101,6 +102,7 @@ const Datapreview = ({ dataset, open, onClose }) => {
               </MetadataLabel>
               <MetadataValue>{dataset.node_types}</MetadataValue>
             </MetadataItem>
+
             <MetadataItem>
               <MetadataLabel
                 data-tooltip-id="tooltip"
@@ -110,6 +112,7 @@ const Datapreview = ({ dataset, open, onClose }) => {
               </MetadataLabel>
               <MetadataValue>{dataset.edge_types}</MetadataValue>
             </MetadataItem>
+
             <MetadataItem>
               <MetadataLabel
                 data-tooltip-id="tooltip"
@@ -119,6 +122,7 @@ const Datapreview = ({ dataset, open, onClose }) => {
               </MetadataLabel>
               <MetadataValue>{dataset.assortativity}</MetadataValue>
             </MetadataItem>
+
             <MetadataItem>
               <MetadataLabel
                 data-tooltip-id="tooltip"
@@ -130,17 +134,7 @@ const Datapreview = ({ dataset, open, onClose }) => {
             </MetadataItem>
           </Metadata>
 
-          <GuideContainer>
-            {dataset.guide && dataset.guide.length > 0 ? (
-              dataset.guide.map((step, index) => (
-                <GuideStep key={index}>
-                  <strong>Step {index + 1}:</strong> {step}
-                </GuideStep>
-              ))
-            ) : (
-              <GuideStep>No guide available.</GuideStep>
-            )}
-          </GuideContainer>
+          <Guide steps={dataset.guide} />
         </InfoRow>
 
         {/* Download button with file_url check */}

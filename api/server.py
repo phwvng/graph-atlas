@@ -20,11 +20,18 @@ DATASETS = ["northwind", "movies", "gameofthrones", "stackoverflow", "recommenda
 
 guides = {
     "movies": [
-        "1. Create a Neo4j database",
-        "2. Import the Movies dataset using the provided CSV files.",
-        "3. Use the Cypher query language to explore relationships between actors, movies, and genres.",
-        "4. Visualize the graph using Neo4j Browser or Bloom.",
-        "5. Analyze the data to find connections between actors and movies, such as co-acting relationships or genre associations."
+         {
+    "title": "Exploring the Graph",
+    "description": "Learn how to explore the graph visually using GraphPolaris.",
+    "link": "",
+    "stepId": "step1"
+  },
+  {
+    "title": "Filtering Nodes",
+    "description": "Apply filters to view specific subsets of data nodes.",
+    "link": "",
+    "stepId": "step2"
+  },
     ],
     # Add other guides here, e.g.
     "northwind": [
@@ -193,8 +200,6 @@ def fetch_supabase_graphs():
 
 # -------------------- BACKGROUND WORKER --------------------
 def background_worker():
-    # Fetch Supabase graphs in the background
-    fetch_supabase_graphs()
     while True:
         for graph_id in DATASETS:
             if not is_dataset_fetched(graph_id):

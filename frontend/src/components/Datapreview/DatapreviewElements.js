@@ -216,16 +216,30 @@ export const GuideContainer = styled.div`
 `;
 
 export const GuideStep = styled.div`
+  width: 100%;
+  background: #2a2a2a;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s ease;
+
   color: #a0cfc1;
-  font-size: 18px; /* bumped for consistency */
-  margin-bottom: 14px;
+  font-size: 18px;
   line-height: 1.55;
   font-weight: 500;
 
   strong {
     color: #03c988;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  &:hover {
+    background: #323232;
   }
 `;
+
 
 // Wrapper to place metadata & guide side-by-side nicely
 export const InfoRow = styled.div`
