@@ -134,7 +134,7 @@ const Datapreview = ({ dataset, open, onClose }) => {
             </MetadataItem>
           </Metadata>
 
-          <Guide steps={dataset.guide} />
+          <Guide dataset={dataset} />
         </InfoRow>
 
         {/* Download button with file_url check */}

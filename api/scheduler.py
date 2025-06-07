@@ -7,7 +7,7 @@ import threading
 class JobScheduler:
     def __init__(self):
         self.jobs = []
-        self.max_workers = 4  # Change based on system capabilities
+        self.max_workers = 2  # Change based on system capabilities
         self.running_jobs = 0
         self.lock = threading.Lock()
 
